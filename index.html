@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wild Rift Randomizer</title>
+    
+    <!-- 🔒 PROTEÇÕES DE SEGURANÇA -->
+    <meta http-equiv="Content-Security-Policy" content="
+        default-src 'self' 'unsafe-inline' https:;
+        script-src 'self' 'unsafe-inline' https://accounts.google.com;
+        style-src 'self' 'unsafe-inline' https:;
+        connect-src 'self';
+        img-src 'self' https: data:;
+        font-src 'self';
+        frame-src https://accounts.google.com;
+    ">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            color: #e94560;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #8a8a9c;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .content {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .roles-section {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .stats-section {
+            flex: 2;
+            min-width: 300px;
+        }
+        
+        .section-title {
+            color: #e94560;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #e94560;
+            padding-bottom: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .section-toggle {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .roles-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .role-btn {
+            background: #0f3460;
+            color: white;
+            border: none;
+            padding: 18px 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .role-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+            background: #e94560;
+        }
+        
+        .role-baron {
+            background: #1e40af;
+            border-left: 5px solid #3b82f6;
+        }
+        
+        .role-jungle {
+            background: #065f46;
+            border-left: 5px solid #10b981;
+        }
+        
+        .role-mid {
+            background: #6b21a8;
+            border-left: 5px solid #a855f7;
+        }
+        
+        .role-dragon {
+            background: #991b1b;
+            border-left: 5px solid #dc2626;
+        }
+        
+        .role-support {
+            background: #6b7280;
+            border-left: 5px solid #d1d5db;
+        }
+        
+        .resultado {
+            background: rgba(255,255,255,0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .campeao-nome {
+            font-size: 1.8rem;
+            color: #e94560;
+            margin-bottom: 15px;
+            font-weight: bold;
+            text-align: center;
+        }
+        
+        .pergunta-vitoria {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .botoes-vitoria {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        
+        .btn-vitoria {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .estatisticas-container {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .historico-container {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+        }
+        
+        .estatistica {
+            background: rgba(15, 52, 96, 0.8);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        
+        .estatistica-titulo {
+            font-weight: bold;
+            color: #e94560;
+            margin-bottom: 5px;
+        }
+        
+        .btn-limpar {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            width: 100%;
+            font-size: 1rem;
+        }
+        
+        .btn-limpar:hover {
+            background: #5a6268;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .role-icon {
+            font-size: 1.5rem;
+        }
+        
+        .campeao-stats {
+            background: rgba(233, 69, 96, 0.2);
+            border-left: 4px solid #e94560;
+        }
+        
+        .partida-item {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin: 8px 0;
+            border-left: 4px solid;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .partida-vitoria {
+            border-left-color: #28a745;
+        }
+        
+        .partida-derrota {
+            border-left-color: #dc3545;
+        }
+        
+        .partida-info {
+            flex: 1;
+        }
+        
+        .partida-campeao {
+            font-weight: bold;
+            color: #e94560;
+        }
+        
+        .partida-role {
+            color: #8a8a9c;
+            font-size: 0.9rem;
+        }
+        
+        .partida-data {
+            color: #8a8a9c;
+            font-size: 0.8rem;
+            text-align: right;
+        }
+        
+        .login-section {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            text-align: center;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid #e94560;
+        }
+        
+        .btn-logout {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-logout:hover {
+            background: #c82333;
+        }
+        
+        .login-message {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #8a8a9c;
+        }
+
+        .status-box {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #10b981;
+        }
+
+        .error-box {
+            background: rgba(220, 53, 69, 0.2);
+            border: 1px solid #dc3545;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .success-box {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid #10b981;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                flex-direction: column;
+            }
+            
+            .user-info {
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎮 Wild Rift Randomizer</h1>
+            <div class="subtitle">Seu randomizador de campeões para Wild Rift</div>
+        </div>
+        
+        <div class="login-section">
+            <div id="user-info" class="user-info hidden">
+                <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
+                <span id="user-name">Usuário</span>
+                <button class="btn-logout" onclick="logout()">Sair</button>
+            </div>
+            
+            <div id="login-message" class="login-message">
+                💡 Dica: Randomize um campeão e registre se ganhou ou perdeu para ver estatísticas!
+            </div>
+
+            <div class="status-box">
+                <strong>📍 Status do Sistema:</strong>
+                <div id="system-status">Carregando...</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="roles-section">
+                <h2 class="section-title">Escolha uma Role</h2>
+                <div class="roles-container">
+                    <button class="role-btn role-baron" onclick="randomizarCampeao('Baron')">
+                        <span class="role-icon">⚔️</span> Baron
+                    </button>
+                    <button class="role-btn role-jungle" onclick="randomizarCampeao('Jungle')">
+                        <span class="role-icon">🌳</span> Jungle
+                    </button>
+                    <button class="role-btn role-mid" onclick="randomizarCampeao('Mid')">
+                        <span class="role-icon">🔥</span> Mid
+                    </button>
+                    <button class="role-btn role-dragon" onclick="randomizarCampeao('Dragon')">
+                        <span class="role-icon">🐉</span> ADC
+                    </button>
+                    <button class="role-btn role-support" onclick="randomizarCampeao('Support')">
+                        <span class="role-icon">🛡️</span> Support
+                    </button>
+                </div>
+                
+                <div id="resultado" class="resultado hidden">
+                    <div class="campeao-nome" id="nomeCampeao"></div>
+                    <p class="pergunta-vitoria" id="perguntaVitoria"></p>
+                    <div class="botoes-vitoria">
+                        <button class="btn-vitoria btn-success" onclick="registrarVitoria(true)">✅ Sim, Ganhei!</button>
+                        <button class="btn-vitoria btn-danger" onclick="registrarVitoria(false)">❌ Não, Perdi</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stats-section">
+                <h2 class="section-title">
+                    Estatísticas
+                    <button class="section-toggle" onclick="toggleView()">📊 Ver Histórico</button>
+                </h2>
+                
+                <div id="estatisticas-container" class="estatisticas-container">
+                    <div id="dadosEstatisticas">
+                        <div class="estatistica">
+                            <p>Nenhuma estatística disponível ainda.</p>
+                            <p>Randomize um campeão e registre o resultado para ver estatísticas!</p>
+                        </div>
+                    </div>
+                    <button class="btn-limpar" onclick="limparEstatisticas()">🗑️ Limpar Todas as Estatísticas</button>
+                </div>
+                
+                <div id="historico-container" class="historico-container hidden">
+                    <div id="lista-historico">
+                        <div class="estatistica">
+                            <p>Nenhuma partida registrada ainda.</p>
+                            <p>Randomize um campeão e registre o resultado!</p>
+                        </div>
+                    </div>
+                    <button class="btn-limpar" onclick="limparHistorico()">🗑️ Limpar Histórico</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos campeões - LISTA ATUALIZADA
+        const campeoesPorRole = {
+            'Baron': ['Aatrox', 'Darius', 'Garen', 'Fiora', 'Sett', 'Riven', 'Tryndamere', 'Camille', 'Jax', 'Mordekaiser', 'Malphite', 'Nasus', 'Renekton', 'Gragas', 'Jayce'],
+            'Jungle': ['Lee Sin', 'Khazix', 'Rengar', 'Graves', 'Xin Zhao', 'Ekko', 'Master Yi', 'Olaf', 'Kayn', 'Evelynn', 'Vi', 'Jarvan IV', 'Nunu & Willump', 'Wukong', 'Shyvana'],
+            'Mid': ['Ahri', 'Zed', 'Yasuo', 'Akali', 'Katarina', 'Lux', 'Twisted Fate', 'Diana', 'Kassadin', 'Orianna', 'Annie', 'Aurelion Sol', 'Irelia', 'Corki', 'Galio'],
+            'Dragon': ['Jinx', 'Ezreal', 'Vayne', 'Ashe', 'Kaisa', 'Jhin', 'Lucian', 'Draven', 'Caitlyn', 'Miss Fortune', 'Varus', 'Xayah', 'Tristana', 'Samira', 'Kog Maw'],
+            'Support': ['Thresh', 'Leona', 'Nami', 'Soraka', 'Blitzcrank', 'Alistar', 'Morgana', 'Lulu', 'Janna', 'Braum', 'Pyke', 'Senna', 'Yuumi', 'Rakan', 'Seraphine']
+        };
+
+        let campeaoAtual = '';
+        let roleAtual = '';
+        let estatisticas = [];
+        let usuarioLogado = null;
+
+        // ✅ INICIALIZAÇÃO DO SISTEMA
+        function initializeApp() {
+            console.log('🚀 Inicializando Wild Rift Randomizer...');
+            
+            // Carregar dados salvos
+            carregarDadosSalvos();
+            
+            // Atualizar interface
+            atualizarInterfaceUsuario();
+            atualizarEstatisticasGerais();
+            carregarHistorico();
+            updateSystemStatus();
+            
+            console.log('✅ Sistema inicializado com sucesso!');
+        }
+
+        function carregarDadosSalvos() {
+            try {
+                const statsSalvas = localStorage.getItem('wrEstatisticas');
+                const userSalvo = localStorage.getItem('wrUsuario');
+                
+                if (statsSalvas) {
+                    estatisticas = JSON.parse(statsSalvas);
+                    console.log(`📊 ${estatisticas.length} estatísticas carregadas`);
+                }
+                
+                if (userSalvo) {
+                    usuarioLogado = JSON.parse(userSalvo);
+                    console.log(`👤 Usuário carregado: ${usuarioLogado.nome}`);
+                }
+            } catch (error) {
+                console.error('❌ Erro ao carregar dados:', error);
+                resetarDados();
+            }
+        }
+
+        function resetarDados() {
+            console.log('🔄 Resetando dados...');
+            estatisticas = [];
+            usuarioLogado = null;
+            localStorage.setItem('wrEstatisticas', JSON.stringify([]));
+        }
+
+        function updateSystemStatus() {
+            const statusEl = document.getElementById('system-status');
+            const currentOrigin = window.location.origin;
+            
+            let statusHTML = `
+                <div><strong>🟢 Sistema:</strong> Operacional</div>
+                <div><strong>📊 Partidas:</strong> ${estatisticas.length} registradas</div>
+                <div><strong>🌐 URL:</strong> ${currentOrigin}</div>
+            `;
+            
+            statusEl.innerHTML = statusHTML;
+        }
+
+        function atualizarInterfaceUsuario() {
+            const userInfo = document.getElementById('user-info');
+            
+            if (usuarioLogado) {
+                userInfo.classList.remove('hidden');
+                document.getElementById('user-name').textContent = usuarioLogado.nome;
+                document.getElementById('user-avatar').src = usuarioLogado.avatar;
+            } else {
+                userInfo.classList.add('hidden');
+            }
+        }
+
+        // 🎯 FUNÇÃO PRINCIPAL - RANDOMIZAR CAMPEÃO
+        function randomizarCampeao(role) {
+            if (!role || !campeoesPorRole[role]) {
+                alert('❌ Role inválida!');
+                return;
+            }
+            
+            roleAtual = role;
+            const campeoes = campeoesPorRole[role];
+            const campeaoSorteado = campeoes[Math.floor(Math.random() * campeoes.length)];
+            
+            campeaoAtual = campeaoSorteado;
+            
+            // Atualizar interface
+            document.getElementById('nomeCampeao').textContent = `🎉 ${campeaoSorteado} 🎉`;
+            
+            const roleDisplay = role === 'Dragon' ? 'ADC' : role;
+            document.getElementById('perguntaVitoria').textContent = 
+                `Ganhou com ${campeaoSorteado} na ${roleDisplay}?`;
+            
+            // Mostrar resultado
+            document.getElementById('resultado').classList.remove('hidden');
+            
+            // Scroll suave para o resultado
+            document.getElementById('resultado').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            // Atualizar estatísticas do campeão atual
+            atualizarEstatisticasCampeaoAtual();
+        }
+
+        // 📊 REGISTRAR VITÓRIA/DERROTA
+        function registrarVitoria(ganhou) {
+            if (!campeaoAtual || !roleAtual) {
+                alert('❌ Erro: Nenhum campeão selecionado!');
+                return;
+            }
+            
+            const partida = {
+                nome: campeaoAtual,
+                role: roleAtual,
+                vitoria: ganhou,
+                data: new Date().toLocaleString('pt-BR'),
+                timestamp: new Date().getTime(),
+                usuario: usuarioLogado ? usuarioLogado.id : 'anonimo'
+            };
+            
+            estatisticas.push(partida);
+            
+            try {
+                localStorage.setItem('wrEstatisticas', JSON.stringify(estatisticas));
+                console.log('✅ Partida registrada:', partida);
+                
+                // Feedback visual
+                showTempMessage(ganhou ? '✅ Vitória registrada!' : '❌ Derrota registrada!', 2000);
+                
+            } catch (error) {
+                console.error('❌ Erro ao salvar partida:', error);
+                alert('❌ Erro ao salvar partida!');
+                return;
+            }
+            
+            // Atualizar interfaces
+            atualizarEstatisticasGerais();
+            carregarHistorico();
+            document.getElementById('resultado').classList.add('hidden');
+            updateSystemStatus();
+        }
+
+        // 💫 MENSAGEM TEMPORÁRIA
+        function showTempMessage(message, duration) {
+            const tempDiv = document.createElement('div');
+            tempDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 8px;
+                z-index: 1000;
+                font-weight: bold;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+                font-size: 1.1rem;
+            `;
+            tempDiv.textContent = message;
+            document.body.appendChild(tempDiv);
+            
+            setTimeout(() => {
+                if (tempDiv.parentNode) {
+                    document.body.removeChild(tempDiv);
+                }
+            }, duration);
+        }
+
+        // 🔄 ALTERNAR ENTRE ESTATÍSTICAS E HISTÓRICO
+        function toggleView() {
+            const statsContainer = document.getElementById('estatisticas-container');
+            const historicoContainer = document.getElementById('historico-container');
+            const toggleBtn = document.querySelector('.section-toggle');
+            
+            if (statsContainer.classList.contains('hidden')) {
+                // Mostrar estatísticas
+                statsContainer.classList.remove('hidden');
+                historicoContainer.classList.add('hidden');
+                toggleBtn.textContent = '📊 Ver Histórico';
+                atualizarEstatisticasGerais();
+            } else {
+                // Mostrar histórico
+                statsContainer.classList.add('hidden');
+                historicoContainer.classList.remove('hidden');
+                toggleBtn.textContent = '📈 Ver Estatísticas';
+                carregarHistorico();
+            }
+        }
+
+        // 📋 CARREGAR HISTÓRICO
+        function carregarHistorico() {
+            const historico = estatisticas
+                .sort((a, b) => b.timestamp - a.timestamp)
+                .slice(0, 20); // Últimas 20 partidas
+            
+            const listaHistorico = document.getElementById('lista-historico');
+            
+            if (historico.length === 0) {
+                listaHistorico.innerHTML = `
+                    <div class="estatistica">
+                        <p>Nenhuma partida registrada ainda.</p>
+                        <p>Randomize um campeão e registre o resultado!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = historico.map(partida => {
+                const roleDisplay = partida.role === 'Dragon' ? 'ADC' : partida.role;
+                const resultadoClasse = partida.vitoria ? 'partida-vitoria' : 'partida-derrota';
+                const resultadoIcon = partida.vitoria ? '✅' : '❌';
+                
+                return `
+                    <div class="partida-item ${resultadoClasse}">
+                        <div class="partida-info">
+                            <div class="partida-campeao">${resultadoIcon} ${partida.nome}</div>
+                            <div class="partida-role">${roleDisplay} • ${partida.data}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            listaHistorico.innerHTML = html;
+        }
+
+        // 📈 ATUALIZAR ESTATÍSTICAS DO CAMPEÃO ATUAL
+        function atualizarEstatisticasCampeaoAtual() {
+            if (!campeaoAtual || !roleAtual) return;
+            
+            const roleDisplay = roleAtual === 'Dragon' ? 'ADC' : roleAtual;
+            
+            const statsCampeaoRole = estatisticas.filter(e => 
+                e.nome === campeaoAtual && e.role === roleAtual
+            );
+            
+            const statsCampeaoGeral = estatisticas.filter(e => e.nome === campeaoAtual);
+            const statsRole = estatisticas.filter(e => e.role === roleAtual);
+            
+            const vezesCampeao = statsCampeaoRole.length;
+            const vitoriasCampeao = statsCampeaoRole.filter(e => e.vitoria).length;
+            const percentCampeao = vezesCampeao > 0 ? (vitoriasCampeao / vezesCampeao * 100).toFixed(1) : '0.0';
+            
+            const vezesGeral = statsCampeaoGeral.length;
+            const vitoriasGeral = statsCampeaoGeral.filter(e => e.vitoria).length;
+            const percentGeral = vezesGeral > 0 ? (vitoriasGeral / vezesGeral * 100).toFixed(1) : '0.0';
+            
+            const vezesRole = statsRole.length;
+            const vitoriasRole = statsRole.filter(e => e.vitoria).length;
+            const percentRole = vezesRole > 0 ? (vitoriasRole / vezesRole * 100).toFixed(1) : '0.0';
+            
+            let html = `
+                <div class="estatistica campeao-stats">
+                    <div class="estatistica-titulo">🎯 ${campeaoAtual} (${roleDisplay})</div>
+                    <div>Vezes randomizado: <strong>${vezesCampeao}</strong></div>
+                    <div>Vitórias: <strong>${vitoriasCampeao}</strong> | Derrotas: <strong>${vezesCampeao - vitoriasCampeao}</strong></div>
+                    <div>Aproveitamento: <strong>${percentCampeao}%</strong></div>
+                </div>
+                
+                <div class="estatistica">
+                    <div class="estatistica-titulo">📊 ${campeaoAtual} (Todas Roles)</div>
+                    <div>Total de partidas: <strong>${vezesGeral}</strong></div>
+                    <div>Aproveitamento geral: <strong>${percentGeral}%</strong></div>
+                </div>
+                
+                <div class="estatistica">
+                    <div class="estatistica-titulo">🏆 ${roleDisplay} (Geral)</div>
+                    <div>Total de partidas: <strong>${vezesRole}</strong></div>
+                    <div>Aproveitamento: <strong>${percentRole}%</strong></div>
+                </div>
+            `;
+            
+            document.getElementById('dadosEstatisticas').innerHTML = html;
+        }
+
+        // 📊 ATUALIZAR ESTATÍSTICAS GERAIS
+        function atualizarEstatisticasGerais() {
+            if (estatisticas.length === 0) {
+                document.getElementById('dadosEstatisticas').innerHTML = `
+                    <div class="estatistica">
+                        <p>Nenhuma estatística disponível ainda.</p>
+                        <p>Randomize um campeão e registre o resultado para ver estatísticas!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const totalPartidas = estatisticas.length;
+            const totalVitorias = estatisticas.filter(e => e.vitoria).length;
+            const percentVitoriaGeral = (totalVitorias / totalPartidas * 100).toFixed(1);
+            
+            // Estatísticas por campeão
+            const campeoesStats = {};
+            estatisticas.forEach(stat => {
+                if (!campeoesStats[stat.nome]) {
+                    campeoesStats[stat.nome] = { vitorias: 0, total: 0 };
+                }
+                campeoesStats[stat.nome].vitorias += stat.vitoria ? 1 : 0;
+                campeoesStats[stat.nome].total += 1;
+            });
+            
+            // Top campeões (mínimo 2 partidas)
+            const topCampeoes = Object.entries(campeoesStats)
+                .filter(([_, stats]) => stats.total >= 2)
+                .map(([nome, stats]) => ({
+                    nome,
+                    aproveitamento: (stats.vitorias / stats.total * 100).toFixed(1),
+                    partidas: stats.total
+                }))
+                .sort((a, b) => b.aproveitamento - a.aproveitamento)
+                .slice(0, 5);
+            
+            let topCampeoesHTML = '';
+            if (topCampeoes.length > 0) {
+                topCampeoesHTML = `
+                    <div class="estatistica">
+                        <div class="estatistica-titulo">⭐ Top Campeões</div>
+                        ${topCampeoes.map(campeao => 
+                            `<div>${campeao.nome}: <strong>${campeao.aproveitamento}%</strong> (${campeao.partidas} jogos)</div>`
+                        ).join('')}
+                    </div>
+                `;
+            }
+            
+            document.getElementById('dadosEstatisticas').innerHTML = `
+                <div class="estatistica">
+                    <div class="estatistica-titulo">📈 Estatísticas Gerais</div>
+                    <div>Total de Partidas: <strong>${totalPartidas}</strong></div>
+                    <div>Vitórias: <strong>${totalVitorias}</strong> | Derrotas: <strong>${totalPartidas - totalVitorias}</strong></div>
+                    <div>Taxa de Vitória: <strong>${percentVitoriaGeral}%</strong></div>
+                </div>
+                ${topCampeoesHTML}
+            `;
+        }
+
+        // 🗑️ LIMPAR ESTATÍSTICAS
+        function limparEstatisticas() {
+            if (confirm('⚠️ Tem certeza que quer limpar TODAS as estatísticas?\n\nIsso não pode ser desfeito!')) {
+                resetarDados();
+                atualizarEstatisticasGerais();
+                carregarHistorico();
+                updateSystemStatus();
+                showTempMessage('🗑️ Todas as estatísticas foram limpas!', 3000);
+            }
+        }
+
+        function limparHistorico() {
+            if (confirm('⚠️ Tem certeza que quer limpar o histórico?')) {
+                resetarDados();
+                carregarHistorico();
+                updateSystemStatus();
+                showTempMessage('🗑️ Histórico limpo!', 3000);
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('wrUsuario');
+            usuarioLogado = null;
+            atualizarInterfaceUsuario();
+            showTempMessage('👋 Logout realizado!', 2000);
+        }
+
+        // 🎉 INICIALIZAR APLICAÇÃO
+        window.onload = initializeApp;
+
+        // Tratamento de erro global
+        window.addEventListener('error', function(e) {
+            console.error('❌ Erro global:', e.error);
+        });
+
+    </script>
+</body>
+</html>
