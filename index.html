@@ -3,14 +3,14 @@
 <head>
 <!--
 ╔══════════════════════════════════════════════════════════════════════╗
-║  WILD RIFT PRO — v14.1-AKE                                          ║
+║  WILD RIFT PRO — v14.2-AKE                                          ║
 ║  AKE_BUILD_LOG = {                                                   ║
-║    version: "v14.1-AKE",                                            ║
+║    version: "v14.2-AKE",                                            ║
 ║    build: 2,                                                         ║
 ║    tipo: "GENESIS_RETROFIT",                                         ║
 ║    date: "2026-03-28",                                               ║
 ║    autores: ["Paulo E. F. Neto (Operador)", "Claude Sonnet 4.6"],    ║
-║    delta_v14_para_v14_1: [                                           ║
+║    delta_v14_para_v14.2: [                                           ║
 ║      "CORRECAO_CRITICA: kernel AKE agora instanciado como runtime",  ║
 ║      "AKE.selfTest() roda no onload — 11 sanity checks embutidos",   ║
 ║      "AKE.diagnostico() alimenta painel AKE (3ª aba) com dados reais",║
@@ -37,26 +37,28 @@
 <meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#0d0d1a">
+<meta name="theme-color" content="#020a12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <meta name="description" content="Wild Rift PRO — Randomizador AKE-powered">
-<title>Wild Rift PRO v14.1</title>
+<title>Wild Rift PRO v14.2</title>
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LoL_icon.svg/256px-LoL_icon.svg.png">
 <style>
 :root {
-  --bg:#0d0d1a; --card:#16213e; --alt:#1e1e2e; --alt2:#16162a;
-  --acc:#e94560; --gold:#ffd700;
-  --baron:#ff6b6b; --jungle:#69db7c; --mid:#74c0fc; --duo:#ffa94d; --support:#da77f2;
-  --ake:#00d4ff;
+  --bg:#020a12; --card:#07111d; --alt:#0a1825; --alt2:#050e18;
+  --acc:#C6443A; --gold:#C89B3C;
+  --baron:#C6443A; --jungle:#3CB878; --mid:#3B8FD4; --duo:#D4883B; --support:#9B59D4;
+  --ake:#0BC4E3;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;overflow-x:hidden}
-body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;padding-bottom:68px}
+body{background:var(--bg);color:#fff;font-family:'Barlow Condensed',system-ui,sans-serif;font-size:14px;padding-bottom:68px}
 
 /* ── Header ── */
 .header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 6px;border-bottom:1px solid #1a1a3a;background:rgba(13,13,26,.97);position:sticky;top:0;z-index:100}
 .hl{display:flex;align-items:center;gap:10px}
 .hlogo{width:28px;height:28px;border-radius:6px}
-.htitle{font-size:17px;font-weight:800;color:var(--acc);letter-spacing:1px;font-family:'Segoe UI',sans-serif}
+.htitle{font-size:17px;font-weight:800;background:linear-gradient(135deg,#C89B3C,#F0E6D2,#C89B3C);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px;font-family:'Segoe UI',sans-serif}
 .hver{font-size:9px;color:#444;letter-spacing:.5px}
 .hr{display:flex;gap:6px;align-items:center}
 .ibtn{background:none;border:none;color:#aaa;font-size:17px;cursor:pointer;padding:4px 6px;border-radius:5px;transition:.2s}
@@ -80,7 +82,7 @@ body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif
 .wrap{padding:0 12px}
 
 /* ── Reroll ── */
-.rr-box{text-align:center;font-size:12px;font-weight:800;color:var(--gold);background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:7px;margin:10px 0 8px;letter-spacing:1px}
+.rr-box{text-align:center;font-size:12px;font-weight:800;color:var(--gold);background:#1a1100;border:1px solid #785A28;border-radius:8px;padding:7px;margin:10px 0 8px;letter-spacing:1px}
 
 /* ── Box ── */
 .box{background:var(--card);border:1px solid #2a2a4a;border-radius:10px;padding:12px;margin-bottom:10px}
@@ -90,8 +92,8 @@ body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif
 .btn{width:100%;padding:11px;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s;letter-spacing:.5px}
 .btn:active{transform:scale(.96)}
 .btn:disabled{opacity:.35;cursor:not-allowed}
-.btn-r{background:var(--acc);color:#fff}
-.btn-g{background:linear-gradient(135deg,#b8860b,var(--gold));color:#000;margin-top:8px}
+.btn-r{background:linear-gradient(180deg,#C6443A,#8B2A22);color:#fff;border:1px solid #E05A4E;box-shadow:0 2px 12px rgba(198,68,58,.4)}
+.btn-g{background:linear-gradient(180deg,#C89B3C,#785A28);color:#020a12;border:1px solid #C89B3C;box-shadow:0 2px 12px rgba(200,155,60,.4);margin-top:8px}
 .btn-ake{background:linear-gradient(135deg,#003344,#006688);color:var(--ake);border:1px solid var(--ake);margin-top:6px}
 .btn-ghost{background:transparent;border:1px solid #ff6b6b;color:#ff6b6b;margin-top:12px}
 .btn-blue{background:transparent;border:1px solid var(--mid);color:var(--mid)}
@@ -188,9 +190,9 @@ body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif
 .settings-status{font-size:11px;color:#555;margin-top:6px;min-height:16px}
 
 /* ── Bottom nav ── */
-.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:62px;background:var(--card);display:flex;border-top:2px solid var(--acc);z-index:998;padding-bottom:env(safe-area-inset-bottom)}
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:62px;background:var(--card);display:flex;border-top:1px solid #785A28;z-index:998;padding-bottom:env(safe-area-inset-bottom)}
 .nav-it{flex:1;text-align:center;padding-top:14px;color:#555;font-size:11px;font-weight:800;cursor:pointer;transition:.2s;letter-spacing:.5px;user-select:none}
-.nav-it.active{color:#fff;background:rgba(233,69,96,.12);border-top:3px solid var(--acc);padding-top:11px}
+.nav-it.active{color:#fff;background:rgba(233,69,96,.12);border-top:2px solid var(--gold);padding-top:11px}
 
 /* ── Animations ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
@@ -209,7 +211,7 @@ a{color:inherit;text-decoration:none}
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LoL_icon.svg/256px-LoL_icon.svg.png" class="hlogo" alt="">
     <div>
       <div class="htitle">WILD RIFT PRO</div>
-      <div class="hver">v14.1-AKE · GitHub Edition</div>
+      <div class="hver">v14.2-AKE · GitHub Edition</div>
     </div>
   </div>
   <div class="hr">
@@ -357,7 +359,7 @@ a{color:inherit;text-decoration:none}
 <div class="overlay" id="settingsOverlay" onclick="fecharSettings(event)">
   <div class="settings-box" onclick="event.stopPropagation()">
     <div class="settings-t">⚙️ Configurações</div>
-    <div class="settings-sub">Wild Rift PRO v14.1-AKE · GitHub Edition</div>
+    <div class="settings-sub">Wild Rift PRO v14.2-AKE · GitHub Edition</div>
 
     <label class="settings-label">PATCH ATUAL</label>
     <input type="text" class="settings-input" id="cfgPatch" placeholder="Ex: 5.1" value="">
@@ -396,7 +398,7 @@ const AKE = (() => {
   const _KERNEL_LOG = Object.freeze([{
     build:"1.0.0",data:"2026-03-28T10:00:00-04:00",autor:"Paulo Esteves Fernandes Neto",
     ia_assistente:"Claude Sonnet 4.6",tipo:"GENESIS",
-    descricao:"Kernel embarcado no Wild Rift PRO v14.1-AKE para GitHub Pages. Motor UFT-1.0 completo.",
+    descricao:"Kernel embarcado no Wild Rift PRO v14.2-AKE para GitHub Pages. Motor UFT-1.0 completo.",
     tentativas_falhas:[],erros_corrigidos:[]
   }]);
   const CONST = Object.freeze({
@@ -768,7 +770,7 @@ window.onload=function(){
   const st=AKE.selfTest();
   renderSanity(st);
   restoreMatch();
-  setSyncStatus(GAS_URL?'ok':'','GAS_URL?'Sheets conectado':'Somente local');
+  const _sg=GAS_URL.length>0;setSyncStatus(_sg?'ok':'',_sg?'Sheets conectado':'Somente local');
 };
 
 function carregarConfig(){
@@ -799,7 +801,7 @@ function salvarSettings(){
   rerolls=MAX_REROLLS;
   document.getElementById('patchLbl').textContent=PATCH_ATUAL;
   atualizarRrUI();
-  setSyncStatus(GAS_URL?'ok':'','GAS_URL?\'Sheets conectado\':\'Somente local\'');
+  const _sg2=GAS_URL.length>0;setSyncStatus(_sg2?'ok':'',_sg2?'Sheets conectado':'Somente local');
   document.getElementById('settingsStatus').textContent='✅ Configurações salvas!';
   setTimeout(()=>{document.getElementById('settingsStatus').textContent='';fecharSettingsDireto();},1500);
   showToast('✅ Configurações salvas!','green');
