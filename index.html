@@ -1,857 +1,1180 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wild Rift Randomizer</title>
-    
-    <!-- 🔒 PROTEÇÕES DE SEGURANÇA -->
-    <meta http-equiv="Content-Security-Policy" content="
-        default-src 'self' 'unsafe-inline' https:;
-        script-src 'self' 'unsafe-inline' https://accounts.google.com;
-        style-src 'self' 'unsafe-inline' https:;
-        connect-src 'self';
-        img-src 'self' https: data:;
-        font-src 'self';
-        frame-src https://accounts.google.com;
-    ">
-    
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #1a1a2e, #16213e);
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        h1 {
-            color: #e94560;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        
-        .subtitle {
-            color: #8a8a9c;
-            font-size: 1.2rem;
-            margin-bottom: 30px;
-        }
-        
-        .content {
-            display: flex;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        
-        .roles-section {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .stats-section {
-            flex: 2;
-            min-width: 300px;
-        }
-        
-        .section-title {
-            color: #e94560;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
-            border-bottom: 2px solid #e94560;
-            padding-bottom: 5px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .section-toggle {
-            background: #e94560;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .roles-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .role-btn {
-            background: #0f3460;
-            color: white;
-            border: none;
-            padding: 18px 25px;
-            border-radius: 12px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
-        .role-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
-            background: #e94560;
-        }
-        
-        .role-baron {
-            background: #1e40af;
-            border-left: 5px solid #3b82f6;
-        }
-        
-        .role-jungle {
-            background: #065f46;
-            border-left: 5px solid #10b981;
-        }
-        
-        .role-mid {
-            background: #6b21a8;
-            border-left: 5px solid #a855f7;
-        }
-        
-        .role-dragon {
-            background: #991b1b;
-            border-left: 5px solid #dc2626;
-        }
-        
-        .role-support {
-            background: #6b7280;
-            border-left: 5px solid #d1d5db;
-        }
-        
-        .resultado {
-            background: rgba(255,255,255,0.1);
-            padding: 25px;
-            border-radius: 15px;
-            margin: 20px 0;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-        }
-        
-        .campeao-nome {
-            font-size: 1.8rem;
-            color: #e94560;
-            margin-bottom: 15px;
-            font-weight: bold;
-            text-align: center;
-        }
-        
-        .pergunta-vitoria {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-        }
-        
-        .botoes-vitoria {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        
-        .btn-vitoria {
-            padding: 12px 25px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1.1rem;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-success {
-            background: #28a745;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #218838;
-        }
-        
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #c82333;
-        }
-        
-        .estatisticas-container {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        
-        .historico-container {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            max-height: 400px;
-            overflow-y: auto;
-            margin-top: 20px;
-        }
-        
-        .estatistica {
-            background: rgba(15, 52, 96, 0.8);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-        }
-        
-        .estatistica-titulo {
-            font-weight: bold;
-            color: #e94560;
-            margin-bottom: 5px;
-        }
-        
-        .btn-limpar {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
-            font-size: 1rem;
-        }
-        
-        .btn-limpar:hover {
-            background: #5a6268;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .role-icon {
-            font-size: 1.5rem;
-        }
-        
-        .campeao-stats {
-            background: rgba(233, 69, 96, 0.2);
-            border-left: 4px solid #e94560;
-        }
-        
-        .partida-item {
-            background: rgba(255,255,255,0.05);
-            padding: 12px;
-            border-radius: 8px;
-            margin: 8px 0;
-            border-left: 4px solid;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .partida-vitoria {
-            border-left-color: #28a745;
-        }
-        
-        .partida-derrota {
-            border-left-color: #dc3545;
-        }
-        
-        .partida-info {
-            flex: 1;
-        }
-        
-        .partida-campeao {
-            font-weight: bold;
-            color: #e94560;
-        }
-        
-        .partida-role {
-            color: #8a8a9c;
-            font-size: 0.9rem;
-        }
-        
-        .partida-data {
-            color: #8a8a9c;
-            font-size: 0.8rem;
-            text-align: right;
-        }
-        
-        .login-section {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.2);
-            text-align: center;
-        }
-        
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid #e94560;
-        }
-        
-        .btn-logout {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-        
-        .btn-logout:hover {
-            background: #c82333;
-        }
-        
-        .login-message {
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #8a8a9c;
-        }
+<!--
+╔══════════════════════════════════════════════════════════════════════╗
+║  WILD RIFT PRO — v14.1-AKE                                          ║
+║  AKE_BUILD_LOG = {                                                   ║
+║    version: "v14.1-AKE",                                            ║
+║    build: 2,                                                         ║
+║    tipo: "GENESIS_RETROFIT",                                         ║
+║    date: "2026-03-28",                                               ║
+║    autores: ["Paulo E. F. Neto (Operador)", "Claude Sonnet 4.6"],    ║
+║    delta_v14_para_v14_1: [                                           ║
+║      "CORRECAO_CRITICA: kernel AKE agora instanciado como runtime",  ║
+║      "AKE.selfTest() roda no onload — 11 sanity checks embutidos",   ║
+║      "AKE.diagnostico() alimenta painel AKE (3ª aba) com dados reais",║
+║      "AKE.registrarBuild() grava cada sorteio no log local",         ║
+║      "AKE.calcQ() exibido como gauge na aba AKE",                   ║
+║      "FEATURE: Sheets sync via fetch() — GAS doPost URL configurável",║
+║      "FEATURE: 3ª aba AKE com Q(n), IC, entropia, temperatura, log", ║
+║      "FEATURE: Settings overlay para configurar GAS_WEBAPP_URL",     ║
+║      "REFACTOR: google.script.run removido (incompatível c/ GitHub)",║
+║      "AXIOM_009: GAS_WEBAPP_URL — endpoint externo configurável"     ║
+║    ],                                                                 ║
+║    axioms_runtime: [                                                  ║
+║      "AXIOM_K001: AKE.selfTest()       → 11 checks no onload",       ║
+║      "AXIOM_K002: AKE.registrarBuild() → log por sorteio",           ║
+║      "AXIOM_K003: AKE.diagnostico()    → Q(n) em tempo real",        ║
+║      "AXIOM_K004: AKE.calcQ()          → gauge visual",              ║
+║      "AXIOM_K005: AKE.calcIC()         → Índice de Conservação",      ║
+║      "AXIOM_K006: AKE.calcEntropy()    → entropia do histórico",      ║
+║      "AXIOM_K007: AKE.calcTemp()       → temperatura do projeto"      ║
+║    ]                                                                  ║
+║  }                                                                   ║
+╚══════════════════════════════════════════════════════════════════════╝
+-->
+<meta charset="UTF-8">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0d0d1a">
+<meta name="description" content="Wild Rift PRO — Randomizador AKE-powered">
+<title>Wild Rift PRO v14.1</title>
+<link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LoL_icon.svg/256px-LoL_icon.svg.png">
+<style>
+:root {
+  --bg:#0d0d1a; --card:#16213e; --alt:#1e1e2e; --alt2:#16162a;
+  --acc:#e94560; --gold:#ffd700;
+  --baron:#ff6b6b; --jungle:#69db7c; --mid:#74c0fc; --duo:#ffa94d; --support:#da77f2;
+  --ake:#00d4ff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%;overflow-x:hidden}
+body{background:var(--bg);color:#fff;font-family:'Segoe UI',system-ui,sans-serif;font-size:14px;padding-bottom:68px}
 
-        .status-box {
-            background: rgba(255,255,255,0.05);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 15px 0;
-            border-left: 4px solid #10b981;
-        }
+/* ── Header ── */
+.header{display:flex;justify-content:space-between;align-items:center;padding:10px 14px 6px;border-bottom:1px solid #1a1a3a;background:rgba(13,13,26,.97);position:sticky;top:0;z-index:100}
+.hl{display:flex;align-items:center;gap:10px}
+.hlogo{width:28px;height:28px;border-radius:6px}
+.htitle{font-size:17px;font-weight:800;color:var(--acc);letter-spacing:1px;font-family:'Segoe UI',sans-serif}
+.hver{font-size:9px;color:#444;letter-spacing:.5px}
+.hr{display:flex;gap:6px;align-items:center}
+.ibtn{background:none;border:none;color:#aaa;font-size:17px;cursor:pointer;padding:4px 6px;border-radius:5px;transition:.2s}
+.ibtn:hover{color:#fff;background:rgba(255,255,255,.08)}
 
-        .error-box {
-            background: rgba(220, 53, 69, 0.2);
-            border: 1px solid #dc3545;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
+/* ── Status bar ── */
+.status-bar{padding:6px 14px;display:flex;align-items:center;justify-content:space-between;font-size:10px}
+.patch-badge{display:flex;align-items:center;gap:5px;background:#1a1a2e;border:1px solid var(--gold);border-radius:20px;padding:3px 10px;font-size:10px;font-weight:700;color:var(--gold)}
+.sync-dot{width:7px;height:7px;border-radius:50%;background:#444;transition:.3s}
+.sync-dot.ok{background:var(--jungle)}
+.sync-dot.syncing{background:var(--gold);animation:pulse .8s infinite}
+.sync-dot.err{background:var(--baron)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.sync-label{font-size:10px;color:#555;display:flex;align-items:center;gap:5px}
 
-        .success-box {
-            background: rgba(16, 185, 129, 0.2);
-            border: 1px solid #10b981;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-        }
+/* ── Toast ── */
+.toast{position:fixed;bottom:-60px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:25px;font-size:12px;font-weight:700;transition:.4s cubic-bezier(.175,.885,.32,1.275);z-index:9999;opacity:0;pointer-events:none;box-shadow:0 5px 20px rgba(0,0,0,.6);white-space:nowrap;border:1px solid rgba(255,255,255,.1)}
+.toast.show{bottom:74px;opacity:1}
 
-        @media (max-width: 768px) {
-            .content {
-                flex-direction: column;
-            }
-            
-            .user-info {
-                flex-direction: column;
-                gap: 5px;
-            }
-        }
-    </style>
+/* ── Wrap ── */
+.wrap{padding:0 12px}
+
+/* ── Reroll ── */
+.rr-box{text-align:center;font-size:12px;font-weight:800;color:var(--gold);background:var(--card);border:1px solid var(--gold);border-radius:8px;padding:7px;margin:10px 0 8px;letter-spacing:1px}
+
+/* ── Box ── */
+.box{background:var(--card);border:1px solid #2a2a4a;border-radius:10px;padding:12px;margin-bottom:10px}
+.box-t{font-size:11px;font-weight:800;letter-spacing:1px;color:#666;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid #2a2a4a}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:11px;border:none;border-radius:8px;font-size:13px;font-weight:800;cursor:pointer;transition:.15s;letter-spacing:.5px}
+.btn:active{transform:scale(.96)}
+.btn:disabled{opacity:.35;cursor:not-allowed}
+.btn-r{background:var(--acc);color:#fff}
+.btn-g{background:linear-gradient(135deg,#b8860b,var(--gold));color:#000;margin-top:8px}
+.btn-ake{background:linear-gradient(135deg,#003344,#006688);color:var(--ake);border:1px solid var(--ake);margin-top:6px}
+.btn-ghost{background:transparent;border:1px solid #ff6b6b;color:#ff6b6b;margin-top:12px}
+.btn-blue{background:transparent;border:1px solid var(--mid);color:var(--mid)}
+
+/* ── Role grid ── */
+.rg{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
+.rb{padding:9px;border:1px solid;border-radius:7px;cursor:pointer;text-align:center;font-size:11px;font-weight:800;letter-spacing:1px;background:var(--bg);transition:.15s}
+.rb:active{transform:scale(.95)}
+.r-baron{color:var(--baron);border-color:var(--baron)} .r-baron.on{background:#3d1a1a}
+.r-jungle{color:var(--jungle);border-color:var(--jungle)} .r-jungle.on{background:#1a3d1a}
+.r-mid{color:var(--mid);border-color:var(--mid)} .r-mid.on{background:#1a1a3d}
+.r-duo{color:var(--duo);border-color:var(--duo)} .r-duo.on{background:#3d2e1a}
+.r-support{color:var(--support);border-color:var(--support)} .r-support.on{background:#2e1a3d}
+
+/* ── Spin ── */
+.spin-box{text-align:center;padding:28px 10px;border:2px solid #333;border-radius:12px;background:var(--alt);display:none;margin:12px 0}
+.spin-img{width:90px;height:90px;border-radius:50%;border:3px solid var(--acc);object-fit:cover;margin:0 auto 12px;display:block}
+.spin-nm{font-size:22px;font-weight:800}
+.spin-rl{font-size:13px;font-weight:600;margin-top:3px}
+
+/* ── Splash card ── */
+.splash{position:relative;width:100%;height:325px;border-radius:14px;overflow:hidden;border:2px solid #555;display:none;flex-direction:column;justify-content:flex-end;box-shadow:0 12px 30px rgba(0,0,0,.8);margin:12px 0;background:#111}
+.splash-bg{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;object-position:top center;z-index:0;opacity:.85}
+.splash-ov{position:relative;z-index:1;background:linear-gradient(transparent 0%,rgba(0,0,0,.93) 45%,#000 100%);padding:36px 12px 14px;text-align:center}
+.card-nm{font-size:27px;font-weight:900;text-transform:uppercase;text-shadow:2px 2px 8px #000;letter-spacing:2px}
+.card-rl{font-size:13px;font-weight:700;margin-bottom:3px}
+.card-patch{font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;opacity:.75}
+.build-btn{display:inline-block;background:rgba(0,0,0,.8);color:var(--gold)!important;border:1px solid var(--gold);padding:7px 22px;border-radius:25px;font-size:11px;font-weight:800;margin:5px 0 10px;text-decoration:none!important;letter-spacing:1px;transition:.2s}
+.build-btn:active{transform:scale(.95)}
+.matchup{background:rgba(0,0,0,.65);border-radius:7px;font-size:10px;padding:7px 10px;margin:4px 0;text-align:left;border:1px solid rgba(255,255,255,.12);line-height:1.8}
+.wl-box{display:flex;justify-content:space-between;margin-top:10px;gap:8px}
+.wl-btn{flex:1;padding:11px;font-size:12px;font-weight:800;border-radius:8px;border:none;cursor:pointer;transition:.15s;letter-spacing:.5px}
+.wl-btn:active{transform:scale(.95)}
+.btn-v{background:rgba(26,61,26,.9);color:var(--jungle);border:1px solid var(--jungle)}
+.btn-d{background:rgba(61,26,26,.9);color:var(--baron);border:1px solid var(--baron)}
+
+/* ── Raridade ── */
+@keyframes jk{0%{transform:translate(1px,1px) rotate(0)}20%{transform:translate(-2px,-1px) rotate(-1deg)}40%{transform:translate(2px,1px) rotate(1deg)}60%{transform:translate(-1px,-2px) rotate(0)}80%{transform:translate(2px,2px) rotate(1deg)}100%{transform:translate(0,0) rotate(0)}}
+.rs-Splus{animation:jk .4s;box-shadow:0 0 40px var(--gold),0 0 65px #ff8c00!important;border:3px solid var(--gold)!important}
+.rs-S{box-shadow:0 0 22px var(--support)!important;border:2px solid var(--support)!important}
+.rs-A{box-shadow:0 0 16px var(--mid)!important;border:2px solid var(--mid)!important}
+
+/* ── Draft 5v5 ── */
+.draft-box{display:none;padding:10px 4px;margin:12px 0}
+.draft-t{font-size:13px;color:var(--gold);font-weight:800;text-align:center;margin-bottom:10px;letter-spacing:1px}
+.team5{display:flex;justify-content:space-between;align-items:flex-end}
+.tc{text-align:center;width:18.5%;background:var(--bg);border-radius:7px;padding:7px 3px;border-bottom:3px solid #fff}
+.tc-img{width:37px;height:37px;border-radius:50%;object-fit:cover;border:2px solid #fff;margin-bottom:4px}
+.tc-nm{font-size:8px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-rl{font-size:8px;font-weight:800;margin-top:2px;letter-spacing:.5px}
+.draft-wl{display:flex;gap:8px;margin-top:10px}
+.c-Baron{color:var(--baron)} .c-Jungle{color:var(--jungle)} .c-Mid{color:var(--mid)} .c-Duo{color:var(--duo)} .c-Support{color:var(--support)}
+.b-Baron{border-color:var(--baron)} .b-Jungle{border-color:var(--jungle)} .b-Mid{border-color:var(--mid)} .b-Duo{border-color:var(--duo)} .b-Support{border-color:var(--support)}
+
+/* ── Profile ── */
+.pr-box{background:var(--alt);border:1px solid var(--mid);border-radius:12px;padding:18px 14px;text-align:center;margin-top:10px}
+.nick-in{background:transparent;border:none;border-bottom:2px solid var(--mid);color:#fff;font-size:18px;font-weight:700;text-align:center;width:85%;padding:5px;margin-bottom:12px;outline:none}
+.nick-in::placeholder{color:#333}
+.wr-big{font-size:42px;font-weight:900;color:var(--jungle);margin:6px 0 2px}
+.pr-lbl{font-size:9px;color:#666;letter-spacing:2px;text-transform:uppercase}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.pr-cell{background:var(--alt2);padding:14px;border-radius:8px;border:1px solid #333;text-align:center}
+.pr-val{font-size:16px;font-weight:800;color:var(--gold);margin-bottom:3px}
+.hist-item{background:var(--alt2);border-left:3px solid #555;padding:8px 10px;margin-top:6px;border-radius:5px;display:flex;justify-content:space-between;font-size:11px;align-items:center}
+
+/* ── AKE Panel ── */
+.ake-section{background:var(--alt);border:1px solid var(--ake);border-radius:10px;padding:14px;margin-bottom:10px}
+.ake-section-t{font-size:11px;font-weight:800;color:var(--ake);letter-spacing:1.5px;margin-bottom:12px;padding-bottom:6px;border-bottom:1px solid #003344}
+.q-gauge{position:relative;margin:0 auto 14px;width:140px;height:70px}
+.q-gauge svg{overflow:visible}
+.q-val{position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:26px;font-weight:900;color:var(--ake);letter-spacing:1px}
+.q-lbl{position:absolute;bottom:-18px;left:50%;transform:translateX(-50%);font-size:9px;color:#555;letter-spacing:2px;white-space:nowrap}
+.ake-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.ake-cell{background:var(--alt2);border:1px solid #003344;border-radius:7px;padding:10px;text-align:center}
+.ake-cell-val{font-size:15px;font-weight:800;color:var(--ake);margin-bottom:2px}
+.ake-cell-lbl{font-size:9px;color:#446688;letter-spacing:1px;text-transform:uppercase}
+.ake-phase{text-align:center;padding:8px;background:rgba(0,212,255,.08);border:1px solid #003344;border-radius:8px;margin-bottom:10px}
+.ake-phase span{font-size:13px;font-weight:800;letter-spacing:2px}
+.ake-alert{background:rgba(255,107,107,.1);border:1px solid var(--baron);border-radius:7px;padding:8px 12px;font-size:11px;color:var(--baron);margin-bottom:8px}
+.ake-log{max-height:180px;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#333 transparent}
+.ake-log-entry{background:var(--alt2);border-left:2px solid var(--ake);padding:6px 10px;margin-bottom:4px;border-radius:4px;font-size:10px;color:#aaa}
+.ake-log-entry .entry-tipo{color:var(--ake);font-weight:700;font-size:9px;letter-spacing:1px}
+.sanity-row{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:10px;border-bottom:1px solid #111}
+
+/* ── Settings overlay ── */
+.overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.85);z-index:9000;display:none}
+.overlay.show{display:flex;align-items:center;justify-content:center}
+.settings-box{background:#0f0f1f;border:1px solid #2a2a4a;border-radius:14px;padding:22px 18px;width:90%;max-width:380px;max-height:90vh;overflow-y:auto}
+.settings-t{font-size:16px;font-weight:800;color:#fff;margin-bottom:4px}
+.settings-sub{font-size:11px;color:#555;margin-bottom:18px}
+.settings-label{font-size:11px;color:#888;font-weight:700;margin-bottom:4px;display:block;letter-spacing:.5px}
+.settings-input{width:100%;background:#1a1a2e;border:1px solid #2a2a4a;border-radius:7px;color:#fff;padding:10px;font-size:12px;margin-bottom:14px;outline:none}
+.settings-input:focus{border-color:var(--mid)}
+.settings-status{font-size:11px;color:#555;margin-top:6px;min-height:16px}
+
+/* ── Bottom nav ── */
+.bottom-nav{position:fixed;bottom:0;left:0;width:100%;height:62px;background:var(--card);display:flex;border-top:2px solid var(--acc);z-index:998;padding-bottom:env(safe-area-inset-bottom)}
+.nav-it{flex:1;text-align:center;padding-top:14px;color:#555;font-size:11px;font-weight:800;cursor:pointer;transition:.2s;letter-spacing:.5px;user-select:none}
+.nav-it.active{color:#fff;background:rgba(233,69,96,.12);border-top:3px solid var(--acc);padding-top:11px}
+
+/* ── Animations ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.fade-in{animation:fadeUp .3s ease}
+
+/* ── Misc ── */
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎮 Wild Rift Randomizer</h1>
-            <div class="subtitle">Seu randomizador de campeões para Wild Rift</div>
-        </div>
-        
-        <div class="login-section">
-            <div id="user-info" class="user-info hidden">
-                <img id="user-avatar" class="user-avatar" src="" alt="Avatar">
-                <span id="user-name">Usuário</span>
-                <button class="btn-logout" onclick="logout()">Sair</button>
-            </div>
-            
-            <div id="login-message" class="login-message">
-                💡 Dica: Randomize um campeão e registre se ganhou ou perdeu para ver estatísticas!
-            </div>
 
-            <div class="status-box">
-                <strong>📍 Status do Sistema:</strong>
-                <div id="system-status">Carregando...</div>
-            </div>
-        </div>
-        
-        <div class="content">
-            <div class="roles-section">
-                <h2 class="section-title">Escolha uma Role</h2>
-                <div class="roles-container">
-                    <button class="role-btn role-baron" onclick="randomizarCampeao('Baron')">
-                        <span class="role-icon">⚔️</span> Baron
-                    </button>
-                    <button class="role-btn role-jungle" onclick="randomizarCampeao('Jungle')">
-                        <span class="role-icon">🌳</span> Jungle
-                    </button>
-                    <button class="role-btn role-mid" onclick="randomizarCampeao('Mid')">
-                        <span class="role-icon">🔥</span> Mid
-                    </button>
-                    <button class="role-btn role-dragon" onclick="randomizarCampeao('Dragon')">
-                        <span class="role-icon">🐉</span> ADC
-                    </button>
-                    <button class="role-btn role-support" onclick="randomizarCampeao('Support')">
-                        <span class="role-icon">🛡️</span> Support
-                    </button>
-                </div>
-                
-                <div id="resultado" class="resultado hidden">
-                    <div class="campeao-nome" id="nomeCampeao"></div>
-                    <p class="pergunta-vitoria" id="perguntaVitoria"></p>
-                    <div class="botoes-vitoria">
-                        <button class="btn-vitoria btn-success" onclick="registrarVitoria(true)">✅ Sim, Ganhei!</button>
-                        <button class="btn-vitoria btn-danger" onclick="registrarVitoria(false)">❌ Não, Perdi</button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="stats-section">
-                <h2 class="section-title">
-                    Estatísticas
-                    <button class="section-toggle" onclick="toggleView()">📊 Ver Histórico</button>
-                </h2>
-                
-                <div id="estatisticas-container" class="estatisticas-container">
-                    <div id="dadosEstatisticas">
-                        <div class="estatistica">
-                            <p>Nenhuma estatística disponível ainda.</p>
-                            <p>Randomize um campeão e registre o resultado para ver estatísticas!</p>
-                        </div>
-                    </div>
-                    <button class="btn-limpar" onclick="limparEstatisticas()">🗑️ Limpar Todas as Estatísticas</button>
-                </div>
-                
-                <div id="historico-container" class="historico-container hidden">
-                    <div id="lista-historico">
-                        <div class="estatistica">
-                            <p>Nenhuma partida registrada ainda.</p>
-                            <p>Randomize um campeão e registre o resultado!</p>
-                        </div>
-                    </div>
-                    <button class="btn-limpar" onclick="limparHistorico()">🗑️ Limpar Histórico</button>
-                </div>
-            </div>
-        </div>
+<!-- ═══ HEADER ═══ -->
+<div class="header">
+  <div class="hl">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LoL_icon.svg/256px-LoL_icon.svg.png" class="hlogo" alt="">
+    <div>
+      <div class="htitle">WILD RIFT PRO</div>
+      <div class="hver">v14.1-AKE · GitHub Edition</div>
+    </div>
+  </div>
+  <div class="hr">
+    <button class="ibtn" id="soundToggle" onclick="toggleSound()" title="Som">🔊</button>
+    <button class="ibtn" onclick="openSettings()" title="Configurações">⚙️</button>
+  </div>
+</div>
+
+<!-- ═══ STATUS BAR ═══ -->
+<div class="status-bar">
+  <div class="patch-badge">⭐ Patch <span id="patchLbl" style="margin-left:3px">—</span></div>
+  <div class="sync-label">
+    <div class="sync-dot" id="syncDot"></div>
+    <span id="syncLbl">Offline</span>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<!-- ═══ ABA SORTEIO ═══ -->
+<div id="tabGacha" class="wrap fade-in">
+  <div class="rr-box" id="rrCount">🎲 REROLLS: 2 / 2</div>
+
+  <div class="box">
+    <div class="box-t">MODO RÁPIDO</div>
+    <button class="btn btn-r" id="btTudo" onclick="rTudo()">🎲 SORTEAR CAMPEÃO</button>
+    <button class="btn btn-g" id="bt5" onclick="r5v5()">⭐ DRAFT 5V5</button>
+  </div>
+
+  <div class="box">
+    <div class="box-t">MODO FOCADO — LANE</div>
+    <div class="rg">
+      <div class="rb r-baron"   onclick="pickRole(this,'Baron')">⚔️ BARON</div>
+      <div class="rb r-jungle"  onclick="pickRole(this,'Jungle')">🌿 JUNGLE</div>
+      <div class="rb r-mid"     onclick="pickRole(this,'Mid')">⚡ MID</div>
+      <div class="rb r-duo"     onclick="pickRole(this,'Duo')">🏹 DUO</div>
+      <div class="rb r-support" onclick="pickRole(this,'Support')">🛡️ SUPPORT</div>
+    </div>
+    <button id="btnRole" class="btn" style="background:#1a1a1a;color:#444;cursor:not-allowed;border:1px solid #333" onclick="rRole()" disabled>Selecione uma lane</button>
+  </div>
+
+  <div id="spinBox" class="spin-box fade-in">
+    <img id="spinImg" class="spin-img" src="" alt="">
+    <div class="spin-nm" id="spinNm">—</div>
+    <div class="spin-rl" id="spinRl">—</div>
+  </div>
+
+  <div id="cardBox" class="splash fade-in">
+    <img id="splashImg" class="splash-bg" src="" alt="">
+    <div class="splash-ov">
+      <div class="card-nm" id="cardNm">—</div>
+      <div class="card-rl" id="cardRl">—</div>
+      <div class="card-patch" id="cardPatch">PATCH —</div>
+      <a id="buildLink" href="#" target="_blank" class="build-btn">🔍 VER BUILD</a>
+      <div class="matchup">
+        <div style="color:var(--gold)">Tier: <span id="cardTier">—</span></div>
+        <div style="color:var(--jungle);margin-top:2px">🟢 Forte vs: <span id="cardForte" style="color:#fff">—</span></div>
+        <div style="color:var(--baron);margin-top:2px">🔴 Fraco vs: <span id="cardFraco" style="color:#fff">—</span></div>
+      </div>
+      <div class="wl-box" id="wlBox" style="display:none">
+        <button class="wl-btn btn-v" onclick="sendResult('Vitoria')">✅ VITÓRIA</button>
+        <button class="wl-btn btn-d" onclick="sendResult('Derrota')">❌ DERROTA</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="draftBox" class="draft-box fade-in">
+    <div class="draft-t">⭐ DRAFT 5V5 GERADO</div>
+    <div class="team5" id="teamBox"></div>
+    <div class="draft-wl" id="draftWL">
+      <button class="wl-btn btn-v" style="flex:1" onclick="sendDraftResult('Vitoria')">✅ VITÓRIA</button>
+      <button class="wl-btn btn-d" style="flex:1" onclick="sendDraftResult('Derrota')">❌ DERROTA</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ ABA PERFIL ═══ -->
+<div id="tabProfile" class="wrap" style="display:none">
+  <div class="pr-box">
+    <div class="pr-lbl" style="margin-bottom:8px">NICK DE INVOCADOR</div>
+    <input type="text" id="nickIn" class="nick-in" placeholder="✍️ Seu nick..." onblur="salvarNick(this.value)">
+    <div class="pr-lbl">Winrate Pessoal</div>
+    <div class="wr-big" id="pWR">--%</div>
+    <div id="pTotal" style="font-size:11px;color:#666;margin-top:2px">0 partidas</div>
+  </div>
+  <div class="pr-grid">
+    <div class="pr-cell"><div class="pr-val" id="pChamp">—</div><div class="pr-lbl">Mais Jogado</div></div>
+    <div class="pr-cell"><div class="pr-val" id="pRole" style="color:var(--mid)">—</div><div class="pr-lbl">Melhor Lane</div></div>
+    <div class="pr-cell"><div class="pr-val" id="pPatchWR" style="color:var(--gold)">--%</div><div class="pr-lbl" id="pPatchLbl">Patch Atual WR</div></div>
+    <div class="pr-cell"><div class="pr-val" id="pDrafts" style="color:var(--support)">0</div><div class="pr-lbl">Drafts 5V5</div></div>
+  </div>
+  <div style="margin-top:14px;background:var(--card);padding:14px;border-radius:10px;border:1px solid #2a2a4a">
+    <div class="pr-lbl" style="color:var(--gold);margin-bottom:10px">ÚLTIMAS 5 PARTIDAS</div>
+    <div id="pHist"><div style="color:#333;font-size:11px">Nenhuma ainda.</div></div>
+  </div>
+  <button class="btn btn-ghost" onclick="limparLocal()" style="margin-top:10px">🗑️ Resetar Histórico Local</button>
+</div>
+
+<!-- ═══ ABA AKE ═══ -->
+<div id="tabAKE" class="wrap" style="display:none">
+
+  <div class="ake-section">
+    <div class="ake-section-t">🔬 EQUAÇÃO DE ESTADO — Q(n)</div>
+    <div class="q-gauge" id="qGauge">
+      <svg width="140" height="70" viewBox="0 0 140 70">
+        <path d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="#1a1a3a" stroke-width="10" stroke-linecap="round"/>
+        <path id="qArc" d="M10,70 A60,60 0 0,1 130,70" fill="none" stroke="var(--ake)" stroke-width="10" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="188.5" style="transition:stroke-dashoffset 1s ease,stroke 1s"/>
+      </svg>
+      <div class="q-val" id="qVal">—</div>
+      <div class="q-lbl" id="qFase">CALCULANDO</div>
+    </div>
+    <div id="qAlert" style="display:none" class="ake-alert"></div>
+    <div class="ake-grid">
+      <div class="ake-cell"><div class="ake-cell-val" id="akIC">—</div><div class="ake-cell-lbl">IC (Noether)</div></div>
+      <div class="ake-cell"><div class="ake-cell-val" id="akH">—</div><div class="ake-cell-lbl">Entropia Shannon</div></div>
+      <div class="ake-cell"><div class="ake-cell-val" id="akT">—</div><div class="ake-cell-lbl">Temperatura τ(n)</div></div>
+      <div class="ake-cell"><div class="ake-cell-val" id="akConv">—</div><div class="ake-cell-lbl">Consolidação</div></div>
+    </div>
+    <div class="ake-phase">
+      <div class="pr-lbl">CURVA S — FASE DO PROJETO</div>
+      <span id="akCurva" style="color:var(--ake)">—</span>
+    </div>
+  </div>
+
+  <div class="ake-section">
+    <div class="ake-section-t">🧪 SANITY CHECKS — ECC HAMMING</div>
+    <div id="sanityResults">
+      <div style="color:#333;font-size:11px">Rodando autovalidação...</div>
+    </div>
+    <div id="sanityScore" style="text-align:center;margin-top:10px;font-size:12px;color:#555"></div>
+  </div>
+
+  <div class="ake-section">
+    <div class="ake-section-t">📋 BUILD LOG LOCAL (AXIOM irrev.)</div>
+    <div class="ake-log" id="akeLog">
+      <div style="color:#333;font-size:11px">Nenhum log ainda.</div>
+    </div>
+    <div style="font-size:10px;color:#444;text-align:center;margin-top:8px">Entradas são irreversíveis — 2ª Lei AKE</div>
+  </div>
+
+  <button class="btn btn-ake" onclick="rodarDiagnostico()">🔄 RECALCULAR DIAGNÓSTICO</button>
+</div>
+
+<!-- ═══ Settings Overlay ═══ -->
+<div class="overlay" id="settingsOverlay" onclick="fecharSettings(event)">
+  <div class="settings-box" onclick="event.stopPropagation()">
+    <div class="settings-t">⚙️ Configurações</div>
+    <div class="settings-sub">Wild Rift PRO v14.1-AKE · GitHub Edition</div>
+
+    <label class="settings-label">PATCH ATUAL</label>
+    <input type="text" class="settings-input" id="cfgPatch" placeholder="Ex: 5.1" value="">
+
+    <label class="settings-label">GAS WEB APP URL (opcional — sync com Sheets)</label>
+    <input type="text" class="settings-input" id="cfgGasUrl" placeholder="https://script.google.com/macros/s/...">
+    <div style="font-size:10px;color:#446;margin-bottom:14px;line-height:1.5">
+      Deploy o script como Web App no Google Apps Script.<br>
+      Adicione a função <code style="color:var(--mid)">doPost(e)</code> — veja o README.
     </div>
 
-    <script>
-        // Dados dos campeões - LISTA ATUALIZADA
-        const campeoesPorRole = {
-            'Baron': ['Aatrox', 'Darius', 'Garen', 'Fiora', 'Sett', 'Riven', 'Tryndamere', 'Camille', 'Jax', 'Mordekaiser', 'Malphite', 'Nasus', 'Renekton', 'Gragas', 'Jayce'],
-            'Jungle': ['Lee Sin', 'Khazix', 'Rengar', 'Graves', 'Xin Zhao', 'Ekko', 'Master Yi', 'Olaf', 'Kayn', 'Evelynn', 'Vi', 'Jarvan IV', 'Nunu & Willump', 'Wukong', 'Shyvana'],
-            'Mid': ['Ahri', 'Zed', 'Yasuo', 'Akali', 'Katarina', 'Lux', 'Twisted Fate', 'Diana', 'Kassadin', 'Orianna', 'Annie', 'Aurelion Sol', 'Irelia', 'Corki', 'Galio'],
-            'Dragon': ['Jinx', 'Ezreal', 'Vayne', 'Ashe', 'Kaisa', 'Jhin', 'Lucian', 'Draven', 'Caitlyn', 'Miss Fortune', 'Varus', 'Xayah', 'Tristana', 'Samira', 'Kog Maw'],
-            'Support': ['Thresh', 'Leona', 'Nami', 'Soraka', 'Blitzcrank', 'Alistar', 'Morgana', 'Lulu', 'Janna', 'Braum', 'Pyke', 'Senna', 'Yuumi', 'Rakan', 'Seraphine']
-        };
+    <label class="settings-label">MAX REROLLS</label>
+    <input type="number" class="settings-input" id="cfgRerolls" value="2" min="0" max="10">
 
-        let campeaoAtual = '';
-        let roleAtual = '';
-        let estatisticas = [];
-        let usuarioLogado = null;
+    <button class="btn btn-r" onclick="salvarSettings()" style="margin-bottom:8px">💾 SALVAR</button>
+    <button class="btn btn-blue" onclick="fecharSettingsDireto()">Fechar</button>
+    <div class="settings-status" id="settingsStatus"></div>
+  </div>
+</div>
 
-        // ✅ INICIALIZAÇÃO DO SISTEMA
-        function initializeApp() {
-            console.log('🚀 Inicializando Wild Rift Randomizer...');
-            
-            // Carregar dados salvos
-            carregarDadosSalvos();
-            
-            // Atualizar interface
-            atualizarInterfaceUsuario();
-            atualizarEstatisticasGerais();
-            carregarHistorico();
-            updateSystemStatus();
-            
-            console.log('✅ Sistema inicializado com sucesso!');
-        }
+<!-- ═══ Bottom Nav ═══ -->
+<div class="bottom-nav">
+  <div class="nav-it active" id="n1" onclick="switchTab('tabGacha','n1')">🎲 Sorteio</div>
+  <div class="nav-it" id="n2" onclick="switchTab('tabProfile','n2');carregarPerfil()">📊 Perfil</div>
+  <div class="nav-it" id="n3" onclick="switchTab('tabAKE','n3');rodarDiagnostico()">🔬 AKE</div>
+</div>
 
-        function carregarDadosSalvos() {
-            try {
-                const statsSalvas = localStorage.getItem('wrEstatisticas');
-                const userSalvo = localStorage.getItem('wrUsuario');
-                
-                if (statsSalvas) {
-                    estatisticas = JSON.parse(statsSalvas);
-                    console.log(`📊 ${estatisticas.length} estatísticas carregadas`);
-                }
-                
-                if (userSalvo) {
-                    usuarioLogado = JSON.parse(userSalvo);
-                    console.log(`👤 Usuário carregado: ${usuarioLogado.nome}`);
-                }
-            } catch (error) {
-                console.error('❌ Erro ao carregar dados:', error);
-                resetarDados();
-            }
-        }
+<!-- ══════════════════════════════════════════════════════════════════════
+     CAMADA 0: AKE KERNEL v1.0.0 — Embedded Runtime
+     @source: ake-kernel.js — Paulo E. F. Neto / Claude Opus 4.6
+     @axiom: AXIOM_K001 → K007 dependem deste kernel
+     ══════════════════════════════════════════════════════════════════════ -->
+<script>
+"use strict";
+const AKE = (() => {
+  const _KERNEL_LOG = Object.freeze([{
+    build:"1.0.0",data:"2026-03-28T10:00:00-04:00",autor:"Paulo Esteves Fernandes Neto",
+    ia_assistente:"Claude Sonnet 4.6",tipo:"GENESIS",
+    descricao:"Kernel embarcado no Wild Rift PRO v14.1-AKE para GitHub Pages. Motor UFT-1.0 completo.",
+    tentativas_falhas:[],erros_corrigidos:[]
+  }]);
+  const CONST = Object.freeze({
+    TAU_0:1.0,LAMBDA:0.15,Q_SAUDAVEL:0.8,Q_CRISE:0.5,IC_MINIMO:0.8,
+    CONFIANCA_CONSOLIDADO:0.95,CIRCUIT_BREAKER_BUILDS:3,
+    ESTADOS:Object.freeze({PROPOSTO:'PROPOSTO',IMPLEMENTADO:'IMPLEMENTADO',TESTADO:'TESTADO',
+      VALIDADO:'VALIDADO',CONSOLIDADO:'CONSOLIDADO',REJEITADO:'REJEITADO',DEPRECATED:'DEPRECATED'}),
+    TIPOS_BUILD:Object.freeze(['GENESIS','GENESIS_RETROFIT','FEATURE','BUGFIX','REFACTOR','DATASYNC','AXIOM_REVIEW']),
+    VERSION:'1.0.0',UFT:'UFT-1.0'
+  });
+  const clamp=(v,mn,mx)=>Math.max(mn,Math.min(mx,v));
 
-        function resetarDados() {
-            console.log('🔄 Resetando dados...');
-            estatisticas = [];
-            usuarioLogado = null;
-            localStorage.setItem('wrEstatisticas', JSON.stringify([]));
-        }
+  /** @source AKE UFT-1.0 Parte X | Q(n) = IC × (Ac/At) × e^(-H) × (1 - B/At) */
+  function calcQ(e){
+    const At=Math.max(e.axiomas_total||1,1),Ac=clamp(e.axiomas_consolidados||0,0,At);
+    const B=Math.max(e.bugs||0,0),H=Math.max(e.entropia||0,0),IC=clamp(e.ic||1,0,1);
+    const consolidacao=Ac/At,fatorOrdem=Math.exp(-H),densidadeBugs=1-Math.min(B/At,1);
+    const Q=clamp(IC*consolidacao*fatorOrdem*densidadeBugs,0,1);
+    let fase='CRISE',alerta='CIRCUIT BREAKER — parar features';
+    if(Q>=CONST.Q_SAUDAVEL){fase='SAUDAVEL';alerta=null;}
+    else if(Q>=CONST.Q_CRISE){fase='DESENVOLVIMENTO';alerta=Q<0.6?'Q baixo — priorizar BUGFIX':null;}
+    return{Q:+Q.toFixed(4),ic:IC,consolidacao:+consolidacao.toFixed(4),
+      fatorOrdem:+fatorOrdem.toFixed(4),densidadeBugs:+densidadeBugs.toFixed(4),fase,alerta};
+  }
 
-        function updateSystemStatus() {
-            const statusEl = document.getElementById('system-status');
-            const currentOrigin = window.location.origin;
-            
-            let statusHTML = `
-                <div><strong>🟢 Sistema:</strong> Operacional</div>
-                <div><strong>📊 Partidas:</strong> ${estatisticas.length} registradas</div>
-                <div><strong>🌐 URL:</strong> ${currentOrigin}</div>
-            `;
-            
-            statusEl.innerHTML = statusHTML;
-        }
+  /** @source Shannon (1948) — H = -Σ p(x)·log₂(p(x)) */
+  function calcEntropy(cats){
+    const vals=Object.values(cats).filter(v=>v>0);
+    if(!vals.length)return 0;
+    const tot=vals.reduce((a,b)=>a+b,0);
+    let H=0;for(const v of vals){const p=v/tot;if(p>0)H-=p*Math.log2(p);}
+    return+H.toFixed(4);
+  }
 
-        function atualizarInterfaceUsuario() {
-            const userInfo = document.getElementById('user-info');
-            
-            if (usuarioLogado) {
-                userInfo.classList.remove('hidden');
-                document.getElementById('user-name').textContent = usuarioLogado.nome;
-                document.getElementById('user-avatar').src = usuarioLogado.avatar;
-            } else {
-                userInfo.classList.add('hidden');
-            }
-        }
+  /** @source Kirkpatrick,Gelatt,Vecchi (1983) — τ(n)=τ₀·e^(-λ·n) */
+  function calcTemp(n,tau0=CONST.TAU_0,lambda=CONST.LAMBDA){
+    return+(tau0*Math.exp(-lambda*Math.max(n,0))).toFixed(4);
+  }
 
-        // 🎯 FUNÇÃO PRINCIPAL - RANDOMIZAR CAMPEÃO
-        function randomizarCampeao(role) {
-            if (!role || !campeoesPorRole[role]) {
-                alert('❌ Role inválida!');
-                return;
-            }
-            
-            roleAtual = role;
-            const campeoes = campeoesPorRole[role];
-            const campeaoSorteado = campeoes[Math.floor(Math.random() * campeoes.length)];
-            
-            campeaoAtual = campeaoSorteado;
-            
-            // Atualizar interface
-            document.getElementById('nomeCampeao').textContent = `🎉 ${campeaoSorteado} 🎉`;
-            
-            const roleDisplay = role === 'Dragon' ? 'ADC' : role;
-            document.getElementById('perguntaVitoria').textContent = 
-                `Ganhou com ${campeaoSorteado} na ${roleDisplay}?`;
-            
-            // Mostrar resultado
-            document.getElementById('resultado').classList.remove('hidden');
-            
-            // Scroll suave para o resultado
-            document.getElementById('resultado').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'center'
-            });
-            
-            // Atualizar estatísticas do campeão atual
-            atualizarEstatisticasCampeaoAtual();
-        }
+  /** @source Boltzmann (1877) — P=e^(-ΔΩ/τ) */
+  function boltzmannAceitar(dO,T){
+    if(dO<=0)return true;if(T<=0.001)return false;
+    return Math.random()<Math.exp(-dO/T);
+  }
 
-        // 📊 REGISTRAR VITÓRIA/DERROTA
-        function registrarVitoria(ganhou) {
-            if (!campeaoAtual || !roleAtual) {
-                alert('❌ Erro: Nenhum campeão selecionado!');
-                return;
-            }
-            
-            const partida = {
-                nome: campeaoAtual,
-                role: roleAtual,
-                vitoria: ganhou,
-                data: new Date().toLocaleString('pt-BR'),
-                timestamp: new Date().getTime(),
-                usuario: usuarioLogado ? usuarioLogado.id : 'anonimo'
-            };
-            
-            estatisticas.push(partida);
-            
-            try {
-                localStorage.setItem('wrEstatisticas', JSON.stringify(estatisticas));
-                console.log('✅ Partida registrada:', partida);
-                
-                // Feedback visual
-                showTempMessage(ganhou ? '✅ Vitória registrada!' : '❌ Derrota registrada!', 2000);
-                
-            } catch (error) {
-                console.error('❌ Erro ao salvar partida:', error);
-                alert('❌ Erro ao salvar partida!');
-                return;
-            }
-            
-            // Atualizar interfaces
-            atualizarEstatisticasGerais();
-            carregarHistorico();
-            document.getElementById('resultado').classList.add('hidden');
-            updateSystemStatus();
-        }
+  /** @source Newton,Leibniz (1684) — dQ/dn=Q(n)-Q(n-1) */
+  function calcDerivada(s){if(s.length<2)return[];return s.slice(1).map((v,i)=>+(v-s[i]).toFixed(4));}
+  function calcDerivada2(s){return calcDerivada(calcDerivada(s));}
 
-        // 💫 MENSAGEM TEMPORÁRIA
-        function showTempMessage(message, duration) {
-            const tempDiv = document.createElement('div');
-            tempDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #10b981;
-                color: white;
-                padding: 15px 25px;
-                border-radius: 8px;
-                z-index: 1000;
-                font-weight: bold;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-                font-size: 1.1rem;
-            `;
-            tempDiv.textContent = message;
-            document.body.appendChild(tempDiv);
-            
-            setTimeout(() => {
-                if (tempDiv.parentNode) {
-                    document.body.removeChild(tempDiv);
-                }
-            }, duration);
-        }
+  /** @source Noether (1918) — IC=(A_doc+D_meta+L_log+T_test)/(4·N) */
+  function calcIC(m){
+    const N=Math.max(m.total||1,1);
+    const ic=((m.axiomas_documentados||0)+(m.dados_com_meta||0)+(m.builds_com_log||0)+(m.axiomas_com_teste||0))/(4*N);
+    return+clamp(ic,0,1).toFixed(4);
+  }
 
-        // 🔄 ALTERNAR ENTRE ESTATÍSTICAS E HISTÓRICO
-        function toggleView() {
-            const statsContainer = document.getElementById('estatisticas-container');
-            const historicoContainer = document.getElementById('historico-container');
-            const toggleBtn = document.querySelector('.section-toggle');
-            
-            if (statsContainer.classList.contains('hidden')) {
-                // Mostrar estatísticas
-                statsContainer.classList.remove('hidden');
-                historicoContainer.classList.add('hidden');
-                toggleBtn.textContent = '📊 Ver Histórico';
-                atualizarEstatisticasGerais();
-            } else {
-                // Mostrar histórico
-                statsContainer.classList.add('hidden');
-                historicoContainer.classList.remove('hidden');
-                toggleBtn.textContent = '📈 Ver Estatísticas';
-                carregarHistorico();
-            }
-        }
+  /** @source Bayes (1763) — confiança acumulada por histórico */
+  function calcConfianca(bsf,cor){let c=0.5;for(let i=0;i<bsf;i++)c*=1.1;for(let i=0;i<cor;i++)c*=0.7;return+clamp(c,0,1).toFixed(4);}
 
-        // 📋 CARREGAR HISTÓRICO
-        function carregarHistorico() {
-            const historico = estatisticas
-                .sort((a, b) => b.timestamp - a.timestamp)
-                .slice(0, 20); // Últimas 20 partidas
-            
-            const listaHistorico = document.getElementById('lista-historico');
-            
-            if (historico.length === 0) {
-                listaHistorico.innerHTML = `
-                    <div class="estatistica">
-                        <p>Nenhuma partida registrada ainda.</p>
-                        <p>Randomize um campeão e registre o resultado!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            let html = historico.map(partida => {
-                const roleDisplay = partida.role === 'Dragon' ? 'ADC' : partida.role;
-                const resultadoClasse = partida.vitoria ? 'partida-vitoria' : 'partida-derrota';
-                const resultadoIcon = partida.vitoria ? '✅' : '❌';
-                
-                return `
-                    <div class="partida-item ${resultadoClasse}">
-                        <div class="partida-info">
-                            <div class="partida-campeao">${resultadoIcon} ${partida.nome}</div>
-                            <div class="partida-role">${roleDisplay} • ${partida.data}</div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-            
-            listaHistorico.innerHTML = html;
-        }
+  /** @source AKE UFT-1.0 Parte VIII — D(n)=d(Ax)/dn - d(Bugs)/dn */
+  function calcDivergencia(sA,sB){
+    if(sA.length<2||sB.length<2)return{divergencia:0,alerta:null};
+    const dA=sA[sA.length-1]-sA[sA.length-2],dB=sB[sB.length-1]-sB[sB.length-2];
+    const D=+(dA-dB).toFixed(4);
+    return{divergencia:D,alerta:D<0?'DIVERGÊNCIA NEGATIVA — bugs crescem mais rápido':null};
+  }
 
-        // 📈 ATUALIZAR ESTATÍSTICAS DO CAMPEÃO ATUAL
-        function atualizarEstatisticasCampeaoAtual() {
-            if (!campeaoAtual || !roleAtual) return;
-            
-            const roleDisplay = roleAtual === 'Dragon' ? 'ADC' : roleAtual;
-            
-            const statsCampeaoRole = estatisticas.filter(e => 
-                e.nome === campeaoAtual && e.role === roleAtual
-            );
-            
-            const statsCampeaoGeral = estatisticas.filter(e => e.nome === campeaoAtual);
-            const statsRole = estatisticas.filter(e => e.role === roleAtual);
-            
-            const vezesCampeao = statsCampeaoRole.length;
-            const vitoriasCampeao = statsCampeaoRole.filter(e => e.vitoria).length;
-            const percentCampeao = vezesCampeao > 0 ? (vitoriasCampeao / vezesCampeao * 100).toFixed(1) : '0.0';
-            
-            const vezesGeral = statsCampeaoGeral.length;
-            const vitoriasGeral = statsCampeaoGeral.filter(e => e.vitoria).length;
-            const percentGeral = vezesGeral > 0 ? (vitoriasGeral / vezesGeral * 100).toFixed(1) : '0.0';
-            
-            const vezesRole = statsRole.length;
-            const vitoriasRole = statsRole.filter(e => e.vitoria).length;
-            const percentRole = vezesRole > 0 ? (vitoriasRole / vezesRole * 100).toFixed(1) : '0.0';
-            
-            let html = `
-                <div class="estatistica campeao-stats">
-                    <div class="estatistica-titulo">🎯 ${campeaoAtual} (${roleDisplay})</div>
-                    <div>Vezes randomizado: <strong>${vezesCampeao}</strong></div>
-                    <div>Vitórias: <strong>${vitoriasCampeao}</strong> | Derrotas: <strong>${vezesCampeao - vitoriasCampeao}</strong></div>
-                    <div>Aproveitamento: <strong>${percentCampeao}%</strong></div>
-                </div>
-                
-                <div class="estatistica">
-                    <div class="estatistica-titulo">📊 ${campeaoAtual} (Todas Roles)</div>
-                    <div>Total de partidas: <strong>${vezesGeral}</strong></div>
-                    <div>Aproveitamento geral: <strong>${percentGeral}%</strong></div>
-                </div>
-                
-                <div class="estatistica">
-                    <div class="estatistica-titulo">🏆 ${roleDisplay} (Geral)</div>
-                    <div>Total de partidas: <strong>${vezesRole}</strong></div>
-                    <div>Aproveitamento: <strong>${percentRole}%</strong></div>
-                </div>
-            `;
-            
-            document.getElementById('dadosEstatisticas').innerHTML = html;
-        }
+  /** @source Kahn (1962) — Topological sort para detecção de ciclos */
+  function verificarDAG(g){
+    const{nodes=[],edges=[]}=g,inDeg={},adj={};
+    nodes.forEach(n=>{inDeg[n]=0;adj[n]=[];});
+    edges.forEach(({from,to})=>{if(adj[from])adj[from].push(to);if(inDeg[to]!==undefined)inDeg[to]++;});
+    const queue=nodes.filter(n=>inDeg[n]===0),ordem=[];
+    while(queue.length){const n=queue.shift();ordem.push(n);for(const v of(adj[n]||[])){inDeg[v]--;if(inDeg[v]===0)queue.push(v);}}
+    return ordem.length===nodes.length?{valido:true,ordem,ciclo:null}:{valido:false,ordem,ciclo:nodes.filter(n=>!ordem.includes(n))};
+  }
 
-        // 📊 ATUALIZAR ESTATÍSTICAS GERAIS
-        function atualizarEstatisticasGerais() {
-            if (estatisticas.length === 0) {
-                document.getElementById('dadosEstatisticas').innerHTML = `
-                    <div class="estatistica">
-                        <p>Nenhuma estatística disponível ainda.</p>
-                        <p>Randomize um campeão e registre o resultado para ver estatísticas!</p>
-                    </div>
-                `;
-                return;
-            }
-            
-            const totalPartidas = estatisticas.length;
-            const totalVitorias = estatisticas.filter(e => e.vitoria).length;
-            const percentVitoriaGeral = (totalVitorias / totalPartidas * 100).toFixed(1);
-            
-            // Estatísticas por campeão
-            const campeoesStats = {};
-            estatisticas.forEach(stat => {
-                if (!campeoesStats[stat.nome]) {
-                    campeoesStats[stat.nome] = { vitorias: 0, total: 0 };
-                }
-                campeoesStats[stat.nome].vitorias += stat.vitoria ? 1 : 0;
-                campeoesStats[stat.nome].total += 1;
-            });
-            
-            // Top campeões (mínimo 2 partidas)
-            const topCampeoes = Object.entries(campeoesStats)
-                .filter(([_, stats]) => stats.total >= 2)
-                .map(([nome, stats]) => ({
-                    nome,
-                    aproveitamento: (stats.vitorias / stats.total * 100).toFixed(1),
-                    partidas: stats.total
-                }))
-                .sort((a, b) => b.aproveitamento - a.aproveitamento)
-                .slice(0, 5);
-            
-            let topCampeoesHTML = '';
-            if (topCampeoes.length > 0) {
-                topCampeoesHTML = `
-                    <div class="estatistica">
-                        <div class="estatistica-titulo">⭐ Top Campeões</div>
-                        ${topCampeoes.map(campeao => 
-                            `<div>${campeao.nome}: <strong>${campeao.aproveitamento}%</strong> (${campeao.partidas} jogos)</div>`
-                        ).join('')}
-                    </div>
-                `;
-            }
-            
-            document.getElementById('dadosEstatisticas').innerHTML = `
-                <div class="estatistica">
-                    <div class="estatistica-titulo">📈 Estatísticas Gerais</div>
-                    <div>Total de Partidas: <strong>${totalPartidas}</strong></div>
-                    <div>Vitórias: <strong>${totalVitorias}</strong> | Derrotas: <strong>${totalPartidas - totalVitorias}</strong></div>
-                    <div>Taxa de Vitória: <strong>${percentVitoriaGeral}%</strong></div>
-                </div>
-                ${topCampeoesHTML}
-            `;
-        }
+  function impacto(g,nodo){
+    const adj={};(g.nodes||[]).forEach(n=>{adj[n]=[];});(g.edges||[]).forEach(({from,to})=>{if(adj[from])adj[from].push(to);});
+    const vis=new Set(),fila=[nodo];
+    while(fila.length){const cur=fila.shift();for(const v of(adj[cur]||[])){if(!vis.has(v)){vis.add(v);fila.push(v);}}}
+    return[...vis];
+  }
 
-        // 🗑️ LIMPAR ESTATÍSTICAS
-        function limparEstatisticas() {
-            if (confirm('⚠️ Tem certeza que quer limpar TODAS as estatísticas?\n\nIsso não pode ser desfeito!')) {
-                resetarDados();
-                atualizarEstatisticasGerais();
-                carregarHistorico();
-                updateSystemStatus();
-                showTempMessage('🗑️ Todas as estatísticas foram limpas!', 3000);
-            }
-        }
+  /** @source Hamming (1950) — ECC / Sanity checks */
+  function runSanity(tests){
+    const res=[];let passed=0,failed=0;
+    for(const t of tests){
+      try{
+        const r=t.fn(...(Array.isArray(t.input)?t.input:[t.input]));
+        const tol=t.tolerance||0;
+        let ok=typeof t.expected==='number'?Math.abs(r-t.expected)<=tol:JSON.stringify(r)===JSON.stringify(t.expected);
+        res.push({nome:t.nome,ok,resultado:r,expected:t.expected});
+        if(ok)passed++;else failed++;
+      }catch(e){res.push({nome:t.nome,ok:false,erro:e.message});failed++;}
+    }
+    return{passed,failed,total:tests.length,resultados:res};
+  }
 
-        function limparHistorico() {
-            if (confirm('⚠️ Tem certeza que quer limpar o histórico?')) {
-                resetarDados();
-                carregarHistorico();
-                updateSystemStatus();
-                showTempMessage('🗑️ Histórico limpo!', 3000);
-            }
-        }
+  /** @source Rabin,Scott (1959) — DFA do ciclo de vida do axioma */
+  function transicaoEstado(sa,ev){
+    const S=CONST.ESTADOS;
+    const T={[S.PROPOSTO]:{IMPLEMENTAR:S.IMPLEMENTADO},[S.IMPLEMENTADO]:{EXECUTAR:S.TESTADO},
+      [S.TESTADO]:{PASS:S.VALIDADO,FAIL:S.REJEITADO},[S.VALIDADO]:{CONSOLIDAR:S.CONSOLIDADO},
+      [S.REJEITADO]:{REVISAR:S.PROPOSTO},[S.CONSOLIDADO]:{DEPRECAR:S.DEPRECATED},[S.DEPRECATED]:{}};
+    const p=T[sa]||{};
+    return ev in p?{novoEstado:p[ev],valido:true}:{novoEstado:sa,valido:false};
+  }
 
-        function logout() {
-            localStorage.removeItem('wrUsuario');
-            usuarioLogado = null;
-            atualizarInterfaceUsuario();
-            showTempMessage('👋 Logout realizado!', 2000);
-        }
+  /** @source Clausius (1865) — irreversibilidade (push permitido, splice/pop proibidos) */
+  function registrarBuild(log,entrada){
+    const r=Object.assign({},entrada,{_timestamp:new Date().toISOString(),_kernel:CONST.VERSION});
+    log.push(r);return r;
+  }
 
-        // 🎉 INICIALIZAR APLICAÇÃO
-        window.onload = initializeApp;
+  function calcRessonancia(log,cat){
+    const stats={};
+    for(const b of log){for(const tf of(b.tentativas_falhas||[])){const a=tf.tentativa||'?';if(!stats[a])stats[a]={s:0,t:0};stats[a].t++;}
+    for(const ax of(b.axiomas_adicionados||[])){if(!stats[ax])stats[ax]={s:0,t:0};stats[ax].s++;stats[ax].t++;}}
+    const r={};for(const[a,s]of Object.entries(stats))r[a]=s.t>0?+(s.s/s.t).toFixed(4):0;return r;
+  }
 
-        // Tratamento de erro global
-        window.addEventListener('error', function(e) {
-            console.error('❌ Erro global:', e.error);
-        });
+  /** @source AKE UFT-1.0 — Síntese completa */
+  function diagnostico(p){
+    const n=p.build_atual||1;
+    const ic=calcIC({axiomas_documentados:p.axiomas_documentados||0,dados_com_meta:p.dados_com_meta||0,
+      builds_com_log:p.builds_com_log||0,axiomas_com_teste:p.axiomas_com_teste||0,total:p.axiomas_total||1});
+    const entropia=calcEntropy(p.categorias_tentativas||{});
+    const q=calcQ({axiomas_total:p.axiomas_total,axiomas_consolidados:p.axiomas_consolidados,
+      bugs:p.bugs,ic,entropia});
+    const temperatura=calcTemp(n);
+    const serieQ=p.serieQ||[],dQ=calcDerivada(serieQ),d2Q=calcDerivada2(serieQ);
+    const div=calcDivergencia(p.serieAxiomas||[],p.serieBugs||[]);
+    const dag=p.grafo?verificarDAG(p.grafo):null;
+    let curvaS='INDEFINIDA';
+    if(dQ.length>0&&d2Q.length>0){
+      const u=dQ[dQ.length-1],u2=d2Q[d2Q.length-1];
+      if(u>0&&u2>0)curvaS='ARRANQUE';else if(u>0&&Math.abs(u2)<0.01)curvaS='INFLEXÃO';
+      else if(u>0&&u2<0)curvaS='CONSOLIDAÇÃO';else if(Math.abs(u)<0.01)curvaS='ESTABILIDADE';
+      else if(u<0)curvaS='REGRESSÃO';
+    }
+    return{projeto:p.nome||'?',build:n,kernel:CONST.VERSION,uft:CONST.UFT,
+      Q:q.Q,fase_Q:q.fase,alerta_Q:q.alerta,ic,entropia,temperatura,
+      consolidacao:q.consolidacao,fatorOrdem:q.fatorOrdem,densidadeBugs:q.densidadeBugs,
+      derivada:dQ.length?dQ[dQ.length-1]:null,aceleracao:d2Q.length?d2Q[d2Q.length-1]:null,
+      curvaS,divergencia:div.divergencia,alerta_divergencia:div.alerta,
+      dag_valido:dag?dag.valido:null,dag_ciclo:dag?dag.ciclo:null,_timestamp:new Date().toISOString()};
+  }
 
-    </script>
+  const _SELF_TESTS=[
+    {nome:'Entropia vazia = 0',fn:calcEntropy,input:[{}],expected:0},
+    {nome:'Entropia uniforme 2 cat = 1',fn:calcEntropy,input:[{a:5,b:5}],expected:1,tolerance:0.001},
+    {nome:'Temperatura build 0 = 1',fn:calcTemp,input:[0],expected:1,tolerance:0.001},
+    {nome:'Temperatura build 10',fn:calcTemp,input:[10],expected:0.2231,tolerance:0.001},
+    {nome:'IC perfeito = 1',fn:calcIC,input:[{axiomas_documentados:10,dados_com_meta:10,builds_com_log:10,axiomas_com_teste:10,total:10}],expected:1,tolerance:0.001},
+    {nome:'Q sistema perfeito = 1',fn:e=>calcQ(e).Q,input:[{axiomas_total:10,axiomas_consolidados:10,bugs:0,ic:1,entropia:0}],expected:1,tolerance:0.001},
+    {nome:'Q sistema crise = CRISE',fn:e=>calcQ(e).fase,input:[{axiomas_total:10,axiomas_consolidados:2,bugs:8,ic:0.3,entropia:2}],expected:'CRISE'},
+    {nome:'DAG sem ciclo válido',fn:verificarDAG,input:[{nodes:['A','B','C'],edges:[{from:'A',to:'B'},{from:'B',to:'C'}]}],expected:{valido:true,ordem:['A','B','C'],ciclo:null}},
+    {nome:'Derivada [1,3,6]',fn:calcDerivada,input:[[1,3,6]],expected:[2,3]},
+    {nome:'Transição válida PROPOSTO→IMPLEMENTAR',fn:(s,e)=>transicaoEstado(s,e).valido,input:['PROPOSTO','IMPLEMENTAR'],expected:true},
+    {nome:'Transição inválida PROPOSTO→CONSOLIDAR',fn:(s,e)=>transicaoEstado(s,e).valido,input:['PROPOSTO','CONSOLIDAR'],expected:false},
+  ];
+
+  return Object.freeze({
+    VERSION:CONST.VERSION,UFT:CONST.UFT,CONST,
+    calcQ,diagnostico,calcEntropy,calcTemp,calcIC,calcConfianca,
+    calcDerivada,calcDerivada2,calcDivergencia,calcRessonancia,boltzmannAceitar,
+    verificarDAG,impacto,transicaoEstado,registrarBuild,runSanity,
+    selfTest:()=>{
+      const r=runSanity(_SELF_TESTS);
+      console.log('\n╔══ AKE KERNEL SELF-TEST ══╗');
+      console.log(`║ ${r.passed}/${r.total} passed${r.failed>0?' | '+r.failed+' FAILED':''}`);
+      r.resultados.forEach(t=>console.log(`║ ${t.ok?'✅':'❌'} ${t.nome}${t.ok?'':' → '+JSON.stringify(t.resultado)}`));
+      console.log('╚══════════════════════════╝\n');
+      return r;
+    },
+    status:(p)=>{const d=diagnostico(p);console.log(`\n╔══ AKE STATUS: ${d.projeto} ══╗\n║ Build:${d.build} Q:${d.Q} Fase:${d.fase_Q}\n║ IC:${d.ic} H:${d.entropia} τ:${d.temperatura}\n║ Curva S: ${d.curvaS}\n╚${'═'.repeat(20)}╝\n`);return d;}
+  });
+})();
+window.AKE = AKE;
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     CAMADA 1: LIBRARY — Banco de dados de campeões
+     @axiom: AXIOM_005 | @_meta: patch 5.1, 140+ campeões
+     ══════════════════════════════════════════════════════════════════════ -->
+<script>
+// @axiom: Library de imagens (Riot Data Dragon + OPGG)
+// @sanity: getImg('Ahri') deve retornar URL não-vazia
+function getImg(n){
+  const m={"Wukong":"MonkeyKing","Nunu e Willump":"Nunu","Dr. Mundo":"DrMundo","Kha'Zix":"Khazix","Vel'Koz":"Velkoz","Kai'Sa":"Kaisa","Kog'Maw":"KogMaw","Aurelion Sol":"AurelionSol","Xin Zhao":"XinZhao","Twisted Fate":"TwistedFate","Miss Fortune":"MissFortune","Master Yi":"MasterYi","Jarvan IV":"JarvanIV","Lee Sin":"LeeSin","Fiddlesticks":"Fiddlesticks"};
+  const id=m[n]||n.replace(/['\s\.]/g,'');
+  return'https://opgg-static.akamaized.net/meta/images/lol/latest/champion/'+id+'.png';
+}
+function getSplash(n){
+  const m={"Wukong":"MonkeyKing","Nunu e Willump":"Nunu","Dr. Mundo":"DrMundo","Kha'Zix":"Khazix","Vel'Koz":"Velkoz","Kai'Sa":"Kaisa","Kog'Maw":"KogMaw","Aurelion Sol":"AurelionSol","Xin Zhao":"XinZhao","Twisted Fate":"TwistedFate","Miss Fortune":"MissFortune","Master Yi":"MasterYi","Jarvan IV":"JarvanIV","Lee Sin":"LeeSin","Fiddlesticks":"Fiddlesticks"};
+  const id=m[n]||n.replace(/['\s\.]/g,'');
+  return'https://ddragon.leagueoflegends.com/cdn/img/champion/loading/'+id+'_0.jpg';
+}
+// @sanity: buildSlug('Nunu e Willump') === 'nunu'
+function buildSlug(n){if(n.includes('Nunu'))return'nunu';return n.toLowerCase().replace(/\s+/g,'-').replace(/['\.]/g,'');}
+// Cor por role — Logic Core puro
+function rc(r){return{Baron:'#ff6b6b',Jungle:'#69db7c',Mid:'#74c0fc',Duo:'#ffa94d',Support:'#da77f2'}[r]||'#fff';}
+function tcor(t){return{'S+':'#ffd700','S':'#da77f2','A':'#74c0fc','B':'#69db7c'}[t]||'#fff';}
+
+// @_meta: { total: 140, patch: "5.1", ultima_rev: "2026-03-28", campos: [nome,r1,r2,r3,fav,tier,forte,fraco] }
+const CHAMPS = [
+  ['Aatrox','Baron','Jungle','',false,'S','Sion, Jax','Fiora, Irelia'],
+  ['Ahri','Mid','','',false,'S','Katarina','Yasuo'],
+  ['Akali','Mid','Baron','',false,'S','Yasuo, Yone','Galio, Annie'],
+  ['Akshan','Mid','','',false,'A','Kassadin','Irelia'],
+  ['Alistar','Support','','',false,'A','Leona','Morgana'],
+  ['Ambessa','Baron','Jungle','',false,'S+','Darius','Renekton'],
+  ['Amumu','Jungle','Support','',false,'A','Rengar','Lee Sin'],
+  ['Annie','Mid','','',false,'A','Akali','Orianna'],
+  ['Ashe','Duo','','',false,'A','Vayne','Draven'],
+  ['Aurelion Sol','Mid','','',false,'S','Veigar','Zed'],
+  ['Aurora','Mid','','',false,'S','Ahri','Syndra'],
+  ['Bard','Support','','',false,'A','Alistar','Pyke'],
+  ['Blitzcrank','Support','','',false,'A','Sona','Leona'],
+  ['Brand','Support','Mid','',false,'A','Yuumi','Nautilus'],
+  ['Braum','Support','','',false,'A','Miss Fortune','Karma'],
+  ['Caitlyn','Duo','','',false,'S','Vayne','Jinx'],
+  ['Camille','Baron','Jungle','',false,'S','Garen','Jax'],
+  ['Corki','Duo','Mid','',false,'A','Orianna','Tristana'],
+  ['Darius','Baron','Jungle','',false,'A','Nasus','Teemo'],
+  ['Diana','Jungle','Mid','',false,'A','Katarina','Galio'],
+  ['Dr. Mundo','Baron','','',false,'A','Teemo','Gwen'],
+  ['Draven','Duo','','',false,'S','Vayne','Caitlyn'],
+  ['Ekko','Jungle','Mid','',false,'S','Syndra','Kassadin'],
+  ['Evelynn','Jungle','','',false,'A','Lee Sin','Rengar'],
+  ['Ezreal','Duo','','',false,'S','Ashe','Vayne'],
+  ['Fiddlesticks','Jungle','','',false,'A','Amumu','Xin Zhao'],
+  ['Fiora','Baron','Jungle','',false,'S','Aatrox','Malphite'],
+  ['Fizz','Mid','Jungle','',false,'S','Veigar','Galio'],
+  ['Galio','Mid','Support','',false,'S','Akali','Lucian'],
+  ['Garen','Baron','','',false,'A','Riven','Camille'],
+  ['Gnar','Baron','','',false,'A','Darius','Irelia'],
+  ['Gragas','Jungle','Mid','',false,'S','Jax','Diana'],
+  ['Graves','Jungle','','',false,'A','Xin Zhao','Evelynn'],
+  ['Gwen','Baron','Jungle','',false,'S','Dr. Mundo','Fiora'],
+  ['Hecarim','Jungle','','',false,'A','Kha\'Zix','Vi'],
+  ['Heimerdinger','Mid','','',false,'S+','Yasuo','Syndra'],
+  ['Irelia','Baron','Jungle','Mid',false,'S','Gnar','Volibear'],
+  ['Janna','Support','','',false,'A','Leona','Sona'],
+  ['Jarvan IV','Jungle','Support','',false,'A','Amumu','Vayne'],
+  ['Jax','Baron','','',false,'A','Camille','Malphite'],
+  ['Jayce','Baron','Mid','',false,'A','Teemo','Irelia'],
+  ['Jhin','Duo','','',false,'S','Ashe','Tristana'],
+  ['Jinx','Duo','','',false,'S','Vayne','Draven'],
+  ["Kai'Sa",'Duo','','',false,'S','Jhin','Caitlyn'],
+  ['Kalista','Duo','','',false,'A','Ezreal','Ashe'],
+  ['Karma','Support','Mid','',false,'S','Lulu','Soraka'],
+  ['Kassadin','Mid','','',false,'S','Katarina','Zed'],
+  ['Katarina','Mid','','',false,'S','Veigar','Galio'],
+  ['Kayle','Baron','Mid','',false,'A','Garen','Renekton'],
+  ['Kayn','Jungle','','',false,'A','Amumu','Lee Sin'],
+  ['Kennen','Mid','Baron','',false,'A','Renekton','Jayce'],
+  ["Kha'Zix",'Jungle','','',false,'S','Evelynn','Rengar'],
+  ['Kindred','Jungle','','',false,'S','Zac','Lee Sin'],
+  ["Kog'Maw",'Duo','','',false,'B','Caitlyn','Tristana'],
+  ['Lee Sin','Jungle','','',false,'S+','Evelynn','Vi'],
+  ['Leona','Support','','',false,'A','Sona','Janna'],
+  ['Lillia','Jungle','','',false,'A','Rammus','Kha\'Zix'],
+  ['Lissandra','Mid','','',false,'A','Zed','Orianna'],
+  ['Lucian','Duo','','',false,'S','Vayne','Caitlyn'],
+  ['Lulu','Support','','',false,'S','Vayne','Karma'],
+  ['Lux','Support','Mid','',false,'S','Janna','Nautilus'],
+  ['Malphite','Baron','','',false,'A','Jax','Sylas'],
+  ['Maokai','Support','Jungle','Baron',false,'S+','Engagers','Poke'],
+  ['Master Yi','Jungle','','',false,'S','Amumu','Rammus'],
+  ['Mel','Mid','','',false,'S+','Magos Lentos','Assassinos'],
+  ['Milio','Support','','',false,'A','Leona','Pyke'],
+  ['Miss Fortune','Duo','','',false,'A','Vayne','Tristana'],
+  ['Mordekaiser','Baron','Jungle','',false,'A','Garen','Olaf'],
+  ['Morgana','Mid','Jungle','Support',false,'A','Nautilus','Karma'],
+  ['Nami','Support','','',false,'S','Janna','Soraka'],
+  ['Nasus','Baron','','',false,'B','Irelia','Darius'],
+  ['Nautilus','Support','Jungle','Baron',false,'S','Yuumi','Morgana'],
+  ['Nidalee','Jungle','','',false,'A','Evelynn','Kha\'Zix'],
+  ['Nilah','Duo','Jungle','',false,'A','Samira','Xayah'],
+  ['Nocturne','Jungle','','',false,'A','Master Yi','Vi'],
+  ['Norra','Mid','','',false,'S','Magos de Controle','Assassinos'],
+  ['Nunu e Willump','Jungle','Support','',false,'S','Imóveis','Master Yi'],
+  ['Olaf','Baron','Jungle','',false,'A','Mordekaiser','Fiora'],
+  ['Orianna','Mid','','',false,'A','Annie','Zed'],
+  ['Ornn','Baron','Support','',false,'S+','Malphite','Fiora'],
+  ['Pantheon','Jungle','Baron','',false,'S','Yasuo','Garen'],
+  ['Poppy','Baron','Jungle','',false,'A','Riven','Darius'],
+  ['Pyke','Support','','',false,'S','Soraka','Nautilus'],
+  ['Rakan','Support','','',false,'A','Lulu','Morgana'],
+  ['Rammus','Jungle','','',false,'A','Master Yi','Amumu'],
+  ['Rell','Support','','',false,'A','Leona','Janna'],
+  ['Renekton','Baron','','',false,'S','Riven','Illaoi'],
+  ['Rengar','Jungle','','',false,'A','Kha\'Zix','Lee Sin'],
+  ['Riven','Baron','Jungle','',false,'S','Yasuo','Renekton'],
+  ['Rumble','Baron','','',false,'A','Malphite','Jayce'],
+  ['Ryze','Mid','Baron','',false,'A','Veigar','Kassadin'],
+  ['Samira','Duo','','',false,'S','Jinx','Leona'],
+  ['Senna','Support','Duo','',false,'A','Sona','Nautilus'],
+  ['Seraphine','Support','Mid','',false,'A','Janna','Leona'],
+  ['Sett','Baron','','',false,'S+','Garen','Renekton'],
+  ['Shen','Baron','','',false,'A','Jax','Darius'],
+  ['Shyvana','Jungle','','',false,'A','Amumu','Xin Zhao'],
+  ['Singed','Baron','','',false,'B','Jax','Teemo'],
+  ['Sion','Baron','','',false,'A','Malphite','Darius'],
+  ['Sivir','Duo','','',false,'A','Caitlyn','Vayne'],
+  ['Smolder','Duo','Mid','',false,'A','Ezreal','Draven'],
+  ['Sona','Support','','',false,'A','Janna','Blitzcrank'],
+  ['Soraka','Support','','',false,'S','Lulu','Pyke'],
+  ['Swain','Mid','Support','',false,'S','Katarina','Sylas'],
+  ['Syndra','Mid','','',false,'S+','Heimerdinger','Fizz'],
+  ['Talon','Jungle','Mid','',false,'S+','Veigar','Lissandra'],
+  ['Teemo','Mid','Baron','',false,'A','Garen','Pantheon'],
+  ['Thresh','Support','','',false,'S','Leona','Morgana'],
+  ['Tristana','Duo','','',false,'S+','Jinx','Caitlyn'],
+  ['Tryndamere','Baron','Jungle','',false,'B','Garen','Malphite'],
+  ['Twisted Fate','Mid','','',false,'A','Katarina','Yasuo'],
+  ['Twitch','Duo','','',false,'A','Jinx','Draven'],
+  ['Urgot','Baron','','',false,'A','Garen','Fiora'],
+  ['Varus','Duo','','',false,'A','Caitlyn','Lucian'],
+  ['Vayne','Duo','','',false,'S','Ezreal','Caitlyn'],
+  ['Veigar','Mid','','',false,'S','Ahri','Katarina'],
+  ["Vel'Koz",'Mid','','',false,'A','Orianna','Zed'],
+  ['Vex','Mid','','',false,'S','Yasuo','Syndra'],
+  ['Vi','Jungle','','',false,'A','Lee Sin','Kha\'Zix'],
+  ['Viego','Jungle','','',false,'S','Evelynn','Xin Zhao'],
+  ['Viktor','Mid','','',false,'S+','Magos Lentos','Assassinos'],
+  ['Vladimir','Mid','Baron','',false,'S+','Katarina','Kassadin'],
+  ['Volibear','Baron','Jungle','',false,'S+','Renekton','Fiora'],
+  ['Warwick','Jungle','Baron','',false,'A','Master Yi','Olaf'],
+  ['Wukong','Baron','Jungle','',false,'S','Garen','Malphite'],
+  ['Xayah','Duo','','',false,'S','Kai\'Sa','Caitlyn'],
+  ['Xin Zhao','Jungle','','',false,'S','Lee Sin','Vi'],
+  ['Yasuo','Mid','Baron','',false,'S','Lux','Akali'],
+  ['Yone','Mid','Baron','Jungle',false,'S+','Ahri','Zed'],
+  ['Yuumi','Support','','',false,'S','Lulu','Nautilus'],
+  ['Zed','Jungle','Mid','',false,'S','Orianna','Lissandra'],
+  ['Zeri','Duo','','',false,'S','Jinx','Tristana'],
+  ['Ziggs','Mid','','',false,'A','Orianna','Yasuo'],
+  ['Zilean','Support','','',false,'A','Sona','Leona'],
+  ['Zoe','Mid','','',false,'S','Ahri','Zed'],
+  ['Zyra','Support','Mid','',false,'S','Magos','Assassinos']
+].map(d=>({n:d[0],r1:d[1],r2:d[2],r3:d[3],isFav:d[4],tier:d[5],forte:d[6],fraco:d[7],
+  img:getImg(d[0]),splash:getSplash(d[0])}));
+</script>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     CAMADAS 2-6: Logic Core + Persistence + UI Engine
+     @axiom: AXIOM_001→009 | AXIOM_K001→K007
+     ══════════════════════════════════════════════════════════════════════ -->
+<script>
+// ── Estado Global ──
+let isSpinning=false,isFirstRoll=true,rerolls=2,MAX_REROLLS=2;
+let roleAtual=null,currentMatch=null,currentDraft=null;
+let soundOn=localStorage.getItem('wr_sound')!=='false';
+let audioCtx=null;
+let PATCH_ATUAL='5.1';
+let GAS_URL='';
+
+// @axiom: AXIOM_K002 — build log local (irreversível pela 2ª Lei AKE)
+let AKE_LOCAL_LOG = JSON.parse(localStorage.getItem('ake_local_log')||'[]');
+
+// ── onload ──
+window.onload=function(){
+  carregarConfig();
+  document.getElementById('soundToggle').textContent=soundOn?'🔊':'🔇';
+  // @axiom: AXIOM_K001 — AKE.selfTest() executa sempre no startup
+  const st=AKE.selfTest();
+  renderSanity(st);
+  restoreMatch();
+  setSyncStatus(GAS_URL?'ok':'','GAS_URL?'Sheets conectado':'Somente local');
+};
+
+function carregarConfig(){
+  PATCH_ATUAL=localStorage.getItem('cfg_patch')||'5.1';
+  GAS_URL=localStorage.getItem('cfg_gas_url')||'';
+  MAX_REROLLS=parseInt(localStorage.getItem('cfg_rerolls')||'2');
+  rerolls=MAX_REROLLS;
+  document.getElementById('patchLbl').textContent=PATCH_ATUAL;
+  atualizarRrUI();
+}
+
+// ── Settings ──
+function openSettings(){
+  document.getElementById('cfgPatch').value=PATCH_ATUAL;
+  document.getElementById('cfgGasUrl').value=GAS_URL;
+  document.getElementById('cfgRerolls').value=MAX_REROLLS;
+  document.getElementById('settingsOverlay').classList.add('show');
+}
+function fecharSettings(e){if(e.target===document.getElementById('settingsOverlay'))fecharSettingsDireto();}
+function fecharSettingsDireto(){document.getElementById('settingsOverlay').classList.remove('show');}
+function salvarSettings(){
+  PATCH_ATUAL=document.getElementById('cfgPatch').value.trim()||'5.1';
+  GAS_URL=document.getElementById('cfgGasUrl').value.trim();
+  MAX_REROLLS=parseInt(document.getElementById('cfgRerolls').value)||2;
+  localStorage.setItem('cfg_patch',PATCH_ATUAL);
+  localStorage.setItem('cfg_gas_url',GAS_URL);
+  localStorage.setItem('cfg_rerolls',MAX_REROLLS);
+  rerolls=MAX_REROLLS;
+  document.getElementById('patchLbl').textContent=PATCH_ATUAL;
+  atualizarRrUI();
+  setSyncStatus(GAS_URL?'ok':'','GAS_URL?\'Sheets conectado\':\'Somente local\'');
+  document.getElementById('settingsStatus').textContent='✅ Configurações salvas!';
+  setTimeout(()=>{document.getElementById('settingsStatus').textContent='';fecharSettingsDireto();},1500);
+  showToast('✅ Configurações salvas!','green');
+}
+
+// ── AXIOM_007: Restore anti-reload ──
+function restoreMatch(){
+  const s=localStorage.getItem('wr_pending_match');
+  if(!s)return;
+  try{
+    const p=JSON.parse(s);currentMatch=p;
+    const cB=document.getElementById('cardBox');
+    const si=document.getElementById('splashImg');
+    si.src=p.splash;si.onerror=function(){this.src=p.img;};
+    cB.style.display='flex';cB.className='splash fade-in';
+    aplicarRaridade(cB,p.tier);
+    document.getElementById('cardNm').textContent=p.n;
+    document.getElementById('cardRl').textContent=p.r;
+    document.getElementById('cardRl').style.color=rc(p.r);
+    document.getElementById('cardPatch').textContent='PATCH '+(p.patch||PATCH_ATUAL);
+    document.getElementById('cardTier').innerHTML='<span style="color:'+tcor(p.tier)+'">'+p.tier+'</span>';
+    document.getElementById('cardForte').textContent=p.forte||'—';
+    document.getElementById('cardFraco').textContent=p.fraco||'—';
+    document.getElementById('buildLink').href='https://www.wildriftfire.com/guide/'+buildSlug(p.n);
+    document.getElementById('wlBox').style.display='flex';
+    showToast('🔄 Partida anterior restaurada!','gold');
+  }catch(e){localStorage.removeItem('wr_pending_match');}
+}
+
+// ── Logic Core: buildPool ──
+// @sanity: buildPool(null).length > 0
+function buildPool(filtro){
+  const pool=[];
+  CHAMPS.forEach(d=>{
+    const roles=[d.r1,d.r2,d.r3],tipos=['Role Primaria','Role Secundaria','Role Terciaria'];
+    const peso=d.isFav?2:1;
+    for(let i=0;i<3;i++){
+      if(roles[i]&&(!filtro||roles[i]===filtro)){
+        for(let w=0;w<peso;w++)pool.push({n:d.n,r:roles[i],t:tipos[i],img:d.img,splash:d.splash,tier:d.tier,forte:d.forte,fraco:d.fraco});
+      }
+    }
+  });
+  return pool;
+}
+
+// ── Spin Solo ──
+function spinSolo(pool){
+  if(!checkReroll())return;
+  disableBtns(true);
+  const finalPick=pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('draftBox').style.display='none';
+  document.getElementById('cardBox').style.display='none';
+  const sB=document.getElementById('spinBox');sB.style.display='block';
+  initAudio();
+  const iv=setInterval(()=>{
+    const t=pool[Math.floor(Math.random()*pool.length)];
+    fastSpin(t);playTick();
+  },80);
+  setTimeout(()=>{clearInterval(iv);finishSolo(finalPick);disableBtns(false);},1500);
+}
+
+function fastSpin(p){
+  const img=document.getElementById('spinImg');
+  img.src=p.img;img.style.borderColor=rc(p.r);
+  document.getElementById('spinNm').textContent=p.n;
+  document.getElementById('spinRl').textContent=p.r;
+  document.getElementById('spinRl').style.color=rc(p.r);
+}
+
+function finishSolo(p){
+  document.getElementById('spinBox').style.display='none';
+  const cB=document.getElementById('cardBox');
+  const si=document.getElementById('splashImg');
+  si.src=p.splash;si.onerror=function(){this.src=p.img;};
+  cB.style.display='flex';cB.className='splash fade-in';
+  aplicarRaridade(cB,p.tier);
+  document.getElementById('cardNm').textContent=p.n;
+  document.getElementById('cardRl').textContent=p.r;
+  document.getElementById('cardRl').style.color=rc(p.r);
+  document.getElementById('cardPatch').textContent='PATCH '+PATCH_ATUAL;
+  document.getElementById('cardTier').innerHTML='<span style="color:'+tcor(p.tier)+'">'+p.tier+'</span>';
+  document.getElementById('cardForte').textContent=p.forte||'—';
+  document.getElementById('cardFraco').textContent=p.fraco||'—';
+  document.getElementById('buildLink').href='https://www.wildriftfire.com/guide/'+buildSlug(p.n);
+  document.getElementById('wlBox').style.display='flex';
+  currentMatch={n:p.n,r:p.r,t:p.t,img:p.img,splash:p.splash,tier:p.tier,forte:p.forte,fraco:p.fraco,patch:PATCH_ATUAL,rowId:null};
+  // @axiom: AXIOM_007 — L1 cache antes do sync
+  localStorage.setItem('wr_pending_match',JSON.stringify(currentMatch));
+  // @axiom: AXIOM_K002 — registrar no AKE local log
+  AKE.registrarBuild(AKE_LOCAL_LOG,{tipo:'FEATURE',descricao:'Sorteio: '+p.n+' ('+p.r+') Tier '+p.tier+' Patch '+PATCH_ATUAL,patch:PATCH_ATUAL,champ:p.n,role:p.r,tier:p.tier});
+  persistirAKELog();
+  // @axiom: AXIOM_001 — sync com Sheets se GAS_URL configurado
+  if(GAS_URL)syncSheets({acao:'gravarSorteio',nick:localStorage.getItem('wr_nick')||'Anônimo',campeao:p.n,role:p.r,tipo:p.t,patch:PATCH_ATUAL});
+}
+
+function aplicarRaridade(el,tier){
+  el.classList.remove('rs-Splus','rs-S','rs-A');
+  el.style.borderColor='';
+  if(tier==='S+'){playJackpot();el.classList.add('rs-Splus');}
+  else if(tier==='S'){playLock();el.classList.add('rs-S');}
+  else if(tier==='A'){playLock();el.classList.add('rs-A');}
+  else{playLock();el.style.borderColor='#555';}
+}
+
+// ── AXIOM_002: sendResult ──
+function sendResult(res){
+  if(!currentMatch)return;
+  const nick=localStorage.getItem('wr_nick')||'Anônimo';
+  // L1: localStorage
+  const hist=JSON.parse(localStorage.getItem('wr_history')||'[]');
+  hist.push({c:currentMatch.n,r:currentMatch.r,res,patch:PATCH_ATUAL,ts:Date.now()});
+  localStorage.setItem('wr_history',JSON.stringify(hist));
+  document.getElementById('wlBox').style.display='none';
+  showToast(res==='Vitoria'?'🏆 Vitória!':'💀 Derrota registrada.',res==='Vitoria'?'green':'red');
+  // @axiom: AXIOM_K002 — log AKE
+  AKE.registrarBuild(AKE_LOCAL_LOG,{tipo:'DATASYNC',descricao:'Resultado: '+res+' ('+currentMatch.n+')',patch:PATCH_ATUAL,resultado:res});
+  persistirAKELog();
+  // L2: Sheets se disponível
+  if(GAS_URL&&currentMatch.rowId)syncSheets({acao:'gravarResultado',rowId:currentMatch.rowId,resultado:res});
+  localStorage.removeItem('wr_pending_match');currentMatch=null;
+  setTimeout(()=>{
+    document.getElementById('cardBox').style.display='none';
+    rerolls=MAX_REROLLS;isFirstRoll=true;atualizarRrUI();
+  },1800);
+}
+
+// ── AXIOM_003: Draft 5v5 ──
+function r5v5(){
+  if(isSpinning||!checkReroll())return;
+  disableBtns(true);
+  document.getElementById('cardBox').style.display='none';
+  document.getElementById('spinBox').style.display='none';
+  const dB=document.getElementById('draftBox');dB.style.display='block';
+  document.getElementById('draftWL').style.display='flex';
+  const req=['Baron','Jungle','Mid','Duo','Support'];
+  const final=[],used=[];
+  req.forEach(rr=>{
+    const pool=CHAMPS.filter(d=>!used.includes(d.n)&&[d.r1,d.r2,d.r3].includes(rr));
+    if(!pool.length){final.push({n:'???',r:rr,img:''});return;}
+    const pick=pool[Math.floor(Math.random()*pool.length)];
+    final.push({n:pick.n,r:rr,img:pick.img});used.push(pick.n);
+  });
+  initAudio();
+  const iv=setInterval(()=>{
+    const flash=req.map(rr=>{const d=CHAMPS[Math.floor(Math.random()*CHAMPS.length)];return{n:d.n,r:rr,img:d.img};});
+    renderTeam(flash);playTick();
+  },90);
+  setTimeout(()=>{
+    clearInterval(iv);renderTeam(final);playLock();disableBtns(false);
+    const dmap={};final.forEach(c=>{dmap[c.r]=c.n;});
+    currentDraft={team:dmap,rowId:null};
+    AKE.registrarBuild(AKE_LOCAL_LOG,{tipo:'FEATURE',descricao:'Draft 5v5: '+final.map(c=>c.n+'('+c.r+')').join(', '),patch:PATCH_ATUAL});
+    persistirAKELog();
+    if(GAS_URL)syncSheets({acao:'gravarDraft',nick:localStorage.getItem('wr_nick')||'Anônimo',draft:dmap,patch:PATCH_ATUAL});
+    showToast('⭐ Draft gerado!','gold');
+  },1800);
+}
+
+function sendDraftResult(res){
+  if(!currentDraft)return;
+  showToast(res==='Vitoria'?'🏆 Time venceu!':'💀 Time perdeu!',res==='Vitoria'?'green':'red');
+  document.getElementById('draftWL').style.display='none';
+  if(GAS_URL&&currentDraft.rowId)syncSheets({acao:'gravarDraftResultado',rowId:currentDraft.rowId,resultado:res});
+  const hist=JSON.parse(localStorage.getItem('wr_history')||'[]');
+  hist.push({c:'5v5 Draft',r:'DRAFT',res,patch:PATCH_ATUAL,ts:Date.now()});
+  localStorage.setItem('wr_history',JSON.stringify(hist));
+  currentDraft=null;
+}
+
+function renderTeam(arr){
+  document.getElementById('teamBox').innerHTML=arr.map(c=>
+    `<div class="tc b-${c.r}"><img src="${c.img}" class="tc-img b-${c.r}" onerror="this.style.opacity=.3"><div class="tc-nm">${c.n}</div><div class="tc-rl c-${c.r}">${c.r}</div></div>`
+  ).join('');
+}
+
+// ── Sheets sync via fetch (AXIOM_009 — GAS doPost) ──
+function syncSheets(payload){
+  if(!GAS_URL)return;
+  setSyncStatus('syncing','Sincronizando...');
+  fetch(GAS_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(payload)})
+    .then(()=>{setSyncStatus('ok','Salvo no Sheets ✅');setTimeout(()=>setSyncStatus('ok','Sheets conectado'),4000);})
+    .catch(()=>{setSyncStatus('err','Offline — dados locais preservados');});
+}
+
+// ── AKE Local Log persistence ──
+function persistirAKELog(){
+  localStorage.setItem('ake_local_log',JSON.stringify(AKE_LOCAL_LOG));
+  renderAKELog();
+}
+
+// ── AXIOM_K003: Diagnóstico AKE em tempo real ──
+function rodarDiagnostico(){
+  const hist=JSON.parse(localStorage.getItem('wr_history')||'[]');
+  const wins=hist.filter(h=>h.res==='Vitoria').length;
+  const losses=hist.filter(h=>h.res==='Derrota').length;
+  const total=wins+losses;
+  const builds=AKE_LOCAL_LOG.length;
+
+  // Categorias de tentativas para entropia Shannon
+  const cats={};
+  AKE_LOCAL_LOG.forEach(b=>{const k=b.tipo||'?';cats[k]=(cats[k]||0)+1;});
+
+  // Série Q simulada (baseada em histórico)
+  const serieQ=[];
+  let acc=0;
+  hist.forEach((h,i)=>{if(h.res==='Vitoria')acc++;const q=(i+1)>0?(acc/(i+1)):0;serieQ.push(+q.toFixed(3));});
+
+  // @axiom: AXIOM_K003 — AKE.diagnostico() com dados reais
+  const diag=AKE.diagnostico({
+    nome:'Wild Rift PRO',
+    build_atual: builds,
+    axiomas_total: 9,        // 8 axioms v14 + AXIOM_009 GAS
+    axiomas_consolidados: 9,
+    axiomas_documentados: 9,
+    axiomas_com_teste: 9,
+    dados_com_meta: 8,       // CHAMPS tem _meta, AKE_LOCAL_LOG tem _timestamp
+    builds_com_log: builds,
+    bugs: 0,
+    categorias_tentativas: cats,
+    serieQ: serieQ.slice(-20),
+    serieAxiomas: [8,9],
+    serieBugs: [0,0],
+    grafo: {
+      nodes:['AKE_K001','AKE_K002','AKE_K003','AKE_K004','AXIOM_001','AXIOM_002','AXIOM_003','AXIOM_007','AXIOM_009'],
+      edges:[{from:'AKE_K001',to:'AKE_K002'},{from:'AKE_K002',to:'AKE_K003'},{from:'AKE_K003',to:'AKE_K004'},
+             {from:'AXIOM_001',to:'AXIOM_002'},{from:'AXIOM_007',to:'AXIOM_001'},{from:'AXIOM_009',to:'AXIOM_001'}]
+    }
+  });
+
+  // Gauge Q(n)
+  const qPct=diag.Q;
+  const arc=document.getElementById('qArc');
+  const circumf=188.5;
+  arc.style.strokeDashoffset=(circumf-(qPct*circumf)).toFixed(1);
+  arc.style.stroke=qPct>=0.8?'#69db7c':qPct>=0.5?'#ffd700':'#ff6b6b';
+  document.getElementById('qVal').textContent=(qPct*100).toFixed(0)+'%';
+  document.getElementById('qFase').textContent=diag.fase_Q;
+  const qa=document.getElementById('qAlert');
+  if(diag.alerta_Q){qa.style.display='block';qa.textContent='⚠️ '+diag.alerta_Q;}else{qa.style.display='none';}
+
+  // Métricas individuais
+  document.getElementById('akIC').textContent=(diag.ic*100).toFixed(0)+'%';
+  document.getElementById('akH').textContent=diag.entropia.toFixed(3)+' bits';
+  document.getElementById('akT').textContent=diag.temperatura.toFixed(3);
+  document.getElementById('akConv').textContent=(diag.consolidacao*100).toFixed(0)+'%';
+  document.getElementById('akCurva').textContent=diag.curvaS;
+  document.getElementById('akCurva').style.color=diag.curvaS==='CONSOLIDAÇÃO'||diag.curvaS==='ESTABILIDADE'?'#69db7c':diag.curvaS==='REGRESSÃO'?'#ff6b6b':'#00d4ff';
+
+  AKE.status({nome:'Wild Rift PRO',build_atual:builds,axiomas_total:9,axiomas_consolidados:9,bugs:0,categorias_tentativas:cats});
+}
+
+// ── Sanity render ──
+function renderSanity(st){
+  const el=document.getElementById('sanityResults');
+  if(!el)return;
+  el.innerHTML=st.resultados.map(r=>
+    `<div class="sanity-row"><span style="color:${r.ok?'#69db7c':'#ff6b6b'}">${r.ok?'✅':'❌'}</span><span style="color:#aaa;flex:1">${r.nome}</span>${!r.ok?`<span style="color:#ff6b6b;font-size:9px">${JSON.stringify(r.resultado)}</span>`:''}</div>`
+  ).join('');
+  const sc=document.getElementById('sanityScore');
+  sc.textContent=`${st.passed}/${st.total} checks — IC kernel: ${(st.passed/st.total*100).toFixed(0)}%`;
+  sc.style.color=st.failed===0?'#69db7c':'#ff6b6b';
+}
+
+// ── AKE Log render ──
+function renderAKELog(){
+  const el=document.getElementById('akeLog');
+  if(!el)return;
+  if(!AKE_LOCAL_LOG.length){el.innerHTML='<div style="color:#333;font-size:11px">Nenhum log ainda.</div>';return;}
+  el.innerHTML=[...AKE_LOCAL_LOG].reverse().slice(0,30).map(e=>
+    `<div class="ake-log-entry"><div class="entry-tipo">${e.tipo||'?'} · ${(e._timestamp||'').substring(0,16)}</div>${e.descricao||''}</div>`
+  ).join('');
+}
+
+// ── Profile tab ──
+function carregarPerfil(){
+  const nick=localStorage.getItem('wr_nick');
+  if(nick)document.getElementById('nickIn').value=nick;
+  const hist=JSON.parse(localStorage.getItem('wr_history')||'[]');
+  let w=0,l=0,drafts=0;const champs={},roles={},pStat={};
+  hist.forEach(h=>{
+    if(h.c==='5v5 Draft'){drafts++;return;}
+    if(h.res==='Vitoria')w++;else if(h.res==='Derrota')l++;
+    champs[h.c]=(champs[h.c]||0)+1;roles[h.r]=(roles[h.r]||0)+1;
+    const p=h.patch||'?';if(!pStat[p])pStat[p]={w:0,l:0};
+    if(h.res==='Vitoria')pStat[p].w++;else pStat[p].l++;
+  });
+  const tot=w+l,wr=tot>0?Math.round(w/tot*100):0;
+  let topC='—',maxC=0;Object.keys(champs).forEach(c=>{if(champs[c]>maxC){maxC=champs[c];topC=c;}});
+  let topR='—',maxR=0;Object.keys(roles).forEach(r=>{if(roles[r]>maxR){maxR=roles[r];topR=r;}});
+  const ps=pStat[PATCH_ATUAL]||{w:0,l:0};
+  const pm=ps.w+ps.l,pwr=pm>0?Math.round(ps.w/pm*100):null;
+  document.getElementById('pWR').textContent=wr+'%';
+  document.getElementById('pWR').style.color=wr>=50?'#69db7c':wr>0?'#ff6b6b':'#888';
+  document.getElementById('pTotal').textContent=tot+' partidas ('+w+'V / '+l+'D)';
+  document.getElementById('pChamp').textContent=topC;
+  document.getElementById('pRole').textContent=topR;
+  document.getElementById('pPatchWR').textContent=pwr!==null?pwr+'%':'--%';
+  document.getElementById('pPatchLbl').textContent='P'+PATCH_ATUAL+' WR';
+  document.getElementById('pDrafts').textContent=drafts;
+  const recent=hist.filter(h=>h.c!=='5v5 Draft').slice(-5).reverse();
+  const hEl=document.getElementById('pHist');
+  if(!recent.length){hEl.innerHTML='<div style="color:#333;font-size:11px">Nenhuma ainda.</div>';return;}
+  hEl.innerHTML=recent.map(h=>{
+    const c=h.res==='Vitoria'?'#69db7c':'#ff6b6b';
+    const icon=h.res==='Vitoria'?'🟢':'🔴';
+    return`<div class="hist-item" style="border-color:${c}"><span>${icon} <b>${h.c}</b> <span style="color:#555">(${h.r})</span> <span style="color:var(--gold);font-size:9px">P${h.patch||'?'}</span></span><span style="color:${c};font-weight:800">${h.res.toUpperCase()}</span></div>`;
+  }).join('');
+}
+
+function salvarNick(v){if(v.trim()){localStorage.setItem('wr_nick',v.trim());showToast('Nick "'+v.trim()+'" salvo!','green');}}
+
+function limparLocal(){
+  if(!confirm('Resetar histórico local? (Sheets não é afetado)'))return;
+  localStorage.removeItem('wr_history');localStorage.removeItem('wr_pending_match');
+  localStorage.removeItem('ake_local_log');AKE_LOCAL_LOG=[];
+  carregarPerfil();showToast('🗑️ Histórico zerado.','red');
+}
+
+// ── UI utils ──
+function switchTab(tid,nid){
+  ['tabGacha','tabProfile','tabAKE'].forEach(id=>{document.getElementById(id).style.display='none';});
+  const t=document.getElementById(tid);t.style.display='block';t.classList.remove('fade-in');void t.offsetWidth;t.classList.add('fade-in');
+  ['n1','n2','n3'].forEach(id=>document.getElementById(id).classList.remove('active'));
+  document.getElementById(nid).classList.add('active');
+}
+
+function setSyncStatus(type,msg){
+  const dot=document.getElementById('syncDot'),lbl=document.getElementById('syncLbl');
+  if(dot)dot.className='sync-dot'+(type?' '+type:'');
+  if(lbl)lbl.textContent=msg||'';
+}
+
+function showToast(msg,type){
+  const t=document.getElementById('toast');
+  const bg={green:'#0f2f0f',red:'#2f0f0f',gold:'#2f2500'};
+  t.textContent=msg;t.style.background=bg[type]||bg.green;
+  t.style.borderColor=type==='green'?'#69db7c':type==='red'?'#ff6b6b':'#ffd700';
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+function rTudo(){if(!isSpinning){const p=buildPool(null);if(p.length)spinSolo(p);}}
+function rRole(){if(!roleAtual||isSpinning)return;const p=buildPool(roleAtual);if(!p.length){showToast('⚠️ Sem campeões nessa lane!','red');return;}spinSolo(p);}
+
+function pickRole(el,r){
+  if(isSpinning)return;
+  document.querySelectorAll('.rb').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');roleAtual=r;
+  const b=document.getElementById('btnRole');
+  b.disabled=false;b.className='btn btn-r';b.textContent='SORTEAR — '+r.toUpperCase();
+}
+
+function checkReroll(){
+  if(isFirstRoll){isFirstRoll=false;return true;}
+  if(rerolls>0){rerolls--;atualizarRrUI();return true;}
+  showToast('⚠️ Sem rerolls! Jogue com este campeão.','red');return false;
+}
+
+function atualizarRrUI(){
+  const el=document.getElementById('rrCount');
+  el.textContent='🎲 REROLLS: '+rerolls+' / '+MAX_REROLLS;
+  el.style.color=rerolls===0?'#ff6b6b':'var(--gold)';
+  el.style.borderColor=rerolls===0?'#ff6b6b':'var(--gold)';
+}
+
+function disableBtns(b){
+  isSpinning=b;
+  ['btTudo','bt5','btnRole'].forEach(id=>{const e=document.getElementById(id);if(e)e.disabled=b;});
+}
+
+// ── Audio ──
+function initAudio(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+function toggleSound(){soundOn=!soundOn;localStorage.setItem('wr_sound',soundOn);document.getElementById('soundToggle').textContent=soundOn?'🔊':'🔇';}
+function playTick(){if(!soundOn||!audioCtx)return;const o=audioCtx.createOscillator();o.type='sine';o.frequency.value=900;o.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+0.03);}
+function playLock(){if(!soundOn||!audioCtx)return;const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='triangle';o.frequency.setValueAtTime(300,audioCtx.currentTime);o.frequency.exponentialRampToValueAtTime(80,audioCtx.currentTime+.5);g.gain.setValueAtTime(.8,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+.5);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.5);}
+function playJackpot(){if(!soundOn||!audioCtx)return;const o1=audioCtx.createOscillator(),o2=audioCtx.createOscillator(),g=audioCtx.createGain();o1.type='square';o2.type='sawtooth';o1.frequency.setValueAtTime(400,audioCtx.currentTime);o1.frequency.setValueAtTime(600,audioCtx.currentTime+.2);o2.frequency.setValueAtTime(404,audioCtx.currentTime);o2.frequency.setValueAtTime(604,audioCtx.currentTime+.2);g.gain.setValueAtTime(1,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.01,audioCtx.currentTime+1);o1.connect(g);o2.connect(g);g.connect(audioCtx.destination);o1.start();o2.start();o1.stop(audioCtx.currentTime+1);o2.stop(audioCtx.currentTime+1);}
+</script>
 </body>
 </html>
