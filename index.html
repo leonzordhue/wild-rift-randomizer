@@ -3,14 +3,14 @@
 <head>
 <!--
 ╔══════════════════════════════════════════════════════════════════════╗
-║  WILD RIFT PRO — v14.2-AKE                                          ║
+║  WILD RIFT PRO — v14.3-AKE                                          ║
 ║  AKE_BUILD_LOG = {                                                   ║
-║    version: "v14.2-AKE",                                            ║
+║    version: "v14.3-AKE",                                            ║
 ║    build: 2,                                                         ║
 ║    tipo: "GENESIS_RETROFIT",                                         ║
 ║    date: "2026-03-28",                                               ║
 ║    autores: ["Paulo E. F. Neto (Operador)", "Claude Sonnet 4.6"],    ║
-║    delta_v14_para_v14.2: [                                           ║
+║    delta_v14_para_v14.3: [                                           ║
 ║      "CORRECAO_CRITICA: kernel AKE agora instanciado como runtime",  ║
 ║      "AKE.selfTest() roda no onload — 11 sanity checks embutidos",   ║
 ║      "AKE.diagnostico() alimenta painel AKE (3ª aba) com dados reais",║
@@ -36,12 +36,12 @@
 -->
 <meta charset="UTF-8">
 <meta name="referrer" content="no-referrer">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=5">
 <meta name="theme-color" content="#020a12">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet">
 <meta name="description" content="Wild Rift PRO — Randomizador AKE-powered">
-<title>Wild Rift PRO v14.2</title>
+<title>Wild Rift PRO v14.3</title>
 <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LoL_icon.svg/256px-LoL_icon.svg.png">
 <style>
 :root {
@@ -79,7 +79,7 @@ body{background:var(--bg);color:#fff;font-family:'Barlow Condensed',system-ui,sa
 .toast.show{bottom:74px;opacity:1}
 
 /* ── Wrap ── */
-.wrap{padding:0 12px}
+.wrap{padding:0 12px;max-width:640px;margin:0 auto}
 
 /* ── Reroll ── */
 .rr-box{text-align:center;font-size:12px;font-weight:800;color:var(--gold);background:#1a1100;border:1px solid #785A28;border-radius:8px;padding:7px;margin:10px 0 8px;letter-spacing:1px}
@@ -123,7 +123,7 @@ body{background:var(--bg);color:#fff;font-family:'Barlow Condensed',system-ui,sa
 .card-patch{font-size:10px;color:var(--gold);letter-spacing:1px;margin-bottom:6px;opacity:.75}
 .build-btn{display:inline-block;background:rgba(0,0,0,.8);color:var(--gold)!important;border:1px solid var(--gold);padding:7px 22px;border-radius:25px;font-size:11px;font-weight:800;margin:5px 0 10px;text-decoration:none!important;letter-spacing:1px;transition:.2s}
 .build-btn:active{transform:scale(.95)}
-.matchup{background:rgba(0,0,0,.65);border-radius:7px;font-size:10px;padding:7px 10px;margin:4px 0;text-align:left;border:1px solid rgba(255,255,255,.12);line-height:1.8}
+.matchup{background:rgba(0,0,0,.65);border-radius:7px;font-size:clamp(13px,2.2vw,16px);padding:10px 14px;margin:6px 0;text-align:left;border:1px solid rgba(255,255,255,.12);line-height:2}
 .wl-box{display:flex;justify-content:space-between;margin-top:10px;gap:8px}
 .wl-btn{flex:1;padding:11px;font-size:12px;font-weight:800;border-radius:8px;border:none;cursor:pointer;transition:.15s;letter-spacing:.5px}
 .wl-btn:active{transform:scale(.95)}
@@ -201,6 +201,25 @@ body{background:var(--bg);color:#fff;font-family:'Barlow Condensed',system-ui,sa
 /* ── Misc ── */
 a{color:inherit;text-decoration:none}
 ::-webkit-scrollbar{width:4px} ::-webkit-scrollbar-track{background:transparent} ::-webkit-scrollbar-thumb{background:#333;border-radius:2px}
+@media(min-width:640px){
+  body{font-size:15px}
+  .header{padding:12px 20px}
+  .wrap{padding:0 20px;max-width:680px;margin:0 auto}
+  .splash{height:420px}
+  .card-nm{font-size:clamp(26px,3vw,38px)}
+  .matchup{font-size:clamp(14px,1.8vw,17px);padding:12px 16px;line-height:2.2}
+  .box{padding:18px}
+  .wl-btn{padding:16px;font-size:14px}
+  .btn{padding:14px;font-size:14px}
+  .rg{grid-template-columns:1fr 1fr 1fr}
+  .bottom-nav{height:66px}
+  .nav-it{font-size:13px}
+  .team5{gap:8px}
+  .tc{width:19%}
+  .tc-img{width:50px;height:50px}
+  .tc-nm{font-size:10px}
+  .tc-rl{font-size:10px}
+}
 </style>
 </head>
 <body>
@@ -211,7 +230,7 @@ a{color:inherit;text-decoration:none}
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/LoL_icon.svg/256px-LoL_icon.svg.png" class="hlogo" alt="">
     <div>
       <div class="htitle">WILD RIFT PRO</div>
-      <div class="hver">v14.2-AKE · GitHub Edition</div>
+      <div class="hver">v14.3-AKE · GitHub Edition</div>
     </div>
   </div>
   <div class="hr">
@@ -359,7 +378,7 @@ a{color:inherit;text-decoration:none}
 <div class="overlay" id="settingsOverlay" onclick="fecharSettings(event)">
   <div class="settings-box" onclick="event.stopPropagation()">
     <div class="settings-t">⚙️ Configurações</div>
-    <div class="settings-sub">Wild Rift PRO v14.2-AKE · GitHub Edition</div>
+    <div class="settings-sub">Wild Rift PRO v14.3-AKE · GitHub Edition</div>
 
     <label class="settings-label">PATCH ATUAL</label>
     <input type="text" class="settings-input" id="cfgPatch" placeholder="Ex: 5.1" value="">
@@ -398,7 +417,7 @@ const AKE = (() => {
   const _KERNEL_LOG = Object.freeze([{
     build:"1.0.0",data:"2026-03-28T10:00:00-04:00",autor:"Paulo Esteves Fernandes Neto",
     ia_assistente:"Claude Sonnet 4.6",tipo:"GENESIS",
-    descricao:"Kernel embarcado no Wild Rift PRO v14.2-AKE para GitHub Pages. Motor UFT-1.0 completo.",
+    descricao:"Kernel embarcado no Wild Rift PRO v14.3-AKE para GitHub Pages. Motor UFT-1.0 completo.",
     tentativas_falhas:[],erros_corrigidos:[]
   }]);
   const CONST = Object.freeze({
@@ -591,7 +610,7 @@ window.AKE = AKE;
 function getImg(n){
   const m={"Wukong":"MonkeyKing","Nunu e Willump":"Nunu","Dr. Mundo":"DrMundo","Kha'Zix":"Khazix","Vel'Koz":"Velkoz","Kai'Sa":"Kaisa","Kog'Maw":"KogMaw","Aurelion Sol":"AurelionSol","Xin Zhao":"XinZhao","Twisted Fate":"TwistedFate","Miss Fortune":"MissFortune","Master Yi":"MasterYi","Jarvan IV":"JarvanIV","Lee Sin":"LeeSin","Fiddlesticks":"Fiddlesticks"};
   const id=m[n]||n.replace(/['\s\.]/g,'');
-  return'https://opgg-static.akamaized.net/meta/images/lol/latest/champion/'+id+'.png';
+  return'https://ddragon.leagueoflegends.com/cdn/15.1.1/img/champion/'+id+'.png';
 }
 function getSplash(n){
   const m={"Wukong":"MonkeyKing","Nunu e Willump":"Nunu","Dr. Mundo":"DrMundo","Kha'Zix":"Khazix","Vel'Koz":"Velkoz","Kai'Sa":"Kaisa","Kog'Maw":"KogMaw","Aurelion Sol":"AurelionSol","Xin Zhao":"XinZhao","Twisted Fate":"TwistedFate","Miss Fortune":"MissFortune","Master Yi":"MasterYi","Jarvan IV":"JarvanIV","Lee Sin":"LeeSin","Fiddlesticks":"Fiddlesticks"};
@@ -865,6 +884,8 @@ function spinSolo(pool){
 
 function fastSpin(p){
   const img=document.getElementById('spinImg');
+  // @axiom: AXIOM_IMG — onerror com fallback para URL alternativa
+  img.onerror=function(){this.onerror=null;this.src='https://ddragon.leagueoflegends.com/cdn/img/champion/loading/'+(({"Wukong":"MonkeyKing","Nunu e Willump":"Nunu","Dr. Mundo":"DrMundo","Kha'Zix":"Khazix","Vel'Koz":"Velkoz","Kai'Sa":"Kaisa","Kog'Maw":"KogMaw","Aurelion Sol":"AurelionSol","Xin Zhao":"XinZhao","Twisted Fate":"TwistedFate","Miss Fortune":"MissFortune","Master Yi":"MasterYi","Jarvan IV":"JarvanIV","Lee Sin":"LeeSin","Fiddlesticks":"Fiddlesticks"})[p.n]||p.n.replace(/['\s\.]/g,''))+'_0.jpg';};
   img.src=p.img;img.style.borderColor=rc(p.r);
   document.getElementById('spinNm').textContent=p.n;
   document.getElementById('spinRl').textContent=p.r;
@@ -1153,10 +1174,10 @@ function pickRole(el,r){
   b.disabled=false;b.className='btn btn-r';b.textContent='SORTEAR — '+r.toUpperCase();
 }
 
-function checkReroll(){
-  if(isFirstRoll){isFirstRoll=false;return true;}
-  if(rerolls>0){rerolls--;atualizarRrUI();return true;}
-  showToast('⚠️ Sem rerolls! Jogue com este campeão.','red');return false;
+function checkReroll(){// AXIOM: trava removida por decisão do operador — sorteios ilimitados
+  return true;// sem limite
+  
+  
 }
 
 function atualizarRrUI(){
